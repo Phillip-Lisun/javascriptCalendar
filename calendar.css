@@ -1,0 +1,103 @@
+body{
+    margin: 0%;
+}
+.header {
+    background-color: #61876E;
+    color: #EAE7B1;
+    font-size: 25px;
+    text-align: center;
+    padding: 1%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.welcome{
+    margin-left: 8%;
+    font-size: 50px;
+}
+
+.buttons {
+    text-align: center;
+    float: right;
+}
+
+.button {
+    float: right;
+    padding: 2%;
+    margin:3%;
+    border: 1px solid #EAE7B1;
+    width: 100%;
+}
+
+.button:hover {
+    cursor: pointer;
+    background-color: #EAE7B1;
+    color: #3C6255;
+}
+
+.menu {
+    background-color: #EAE7B1;
+    color: #3C6255;
+    padding: 1%;
+    display: flex;
+    text-align: center;
+    align-items: baseline;
+    justify-content: space-between;
+    font-size: 50px;
+}
+
+.body {
+    background-color: #61876E;
+    padding: 1%;
+    text-align: center;
+    color: #EAE7B1;
+    font-size: 20px;
+}
+
+.arrows:hover {
+    color: #61876E;
+    cursor: pointer;
+}
+
+#leftArrow {
+    float: left;
+    padding-left: 3%;
+}
+
+#rightArrow {
+    padding-right: 3%;
+    float: right;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: auto auto auto auto auto auto auto;
+    gap: 10px;
+    /* background-color: #2196F3; */
+    /* padding: 2%; */
+    height: auto;
+}
+
+.grid-item {
+    padding: 3%;
+    font-size: 30px;
+    text-align: center;
+    border: 1px solid white;
+}
+
+
+.popup{
+    /* display: none; */
+    width: 65%;
+    height: auto;
+    position: absolute;
+    left: 17.5%;
+    top: 30%;
+    padding: 3%;
+    background-color: aquamarine;
+}
+
+#createPopup{
+    display: none;
+}

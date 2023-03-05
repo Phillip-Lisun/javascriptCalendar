@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Calendar</title>
+    <link rel="stylesheet" type="text/css" href="calendar.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+</head>
+
+<body>
+    <div class="header">
+        <div class="welcome">
+            HELLO
+        </div>
+        <div class="buttons">
+            <div id="create">
+                <div class="button" id="addEvent">Add an Event</div>
+            </div>
+            <div class="logging_in">
+                <div class="button" id="login">Login</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="menu">
+        <div class="arrows" id="leftArrow"><strong>&larr;</strong></div>
+        <div class="monthName">MONTH</div>
+        <div class="arrows" id="rightArrow"><strong>&rarr;</strong></div>
+    </div>
+
+    <div class="body">
+        <!-- body -->
+        <div class="grid-container">
+            <div class="dayName"><strong>Sunday</strong></div>
+            <div class="dayName"><strong>Monday</strong></div>
+            <div class="dayName"><strong>Tuesday</strong></div>
+            <div class="dayName"><strong>Wednesday</strong></div>
+            <div class="dayName"><strong>Thursday</strong></div>
+            <div class="dayName"><strong>Friday</strong></div>
+            <div class="dayName"><strong>Saturday</strong></div>
+            <div class="item1">1</div>
+            <div class="item2">2</div>
+            <div class="item3">3</div>
+            <div class="item4">4</div>
+            <div class="item5">5</div>
+            <div class="item6">6</div>
+            <div class="item7">7</div>
+            <div class="item1">1</div>
+            <div class="item2">2</div>
+            <div class="item3">3</div>
+            <div class="item4">4</div>
+            <div class="item5">5</div>
+            <div class="item6">6</div>
+            <div class="item7">7</div>
+            <div class="item1">1</div>
+            <div class="item2">2</div>
+            <div class="item3">3</div>
+            <div class="item4">4</div>
+            <div class="item5">5</div>
+            <div class="item6">6</div>
+            <div class="item7">7</div>
+            <div class="item1">1</div>
+            <div class="item2">2</div>
+            <div class="item3">3</div>
+            <div class="item4">4</div>
+            <div class="item5">5</div>
+            <div class="item6">6</div>
+            <div class="item7">7</div>
+        </div>
+    </div>
+
+    <div class="popup" id="createPopup">
+        <div id="x">x</div>
+    </div>
+
+    <script>
+        document.getElementById("create").addEventListener("click", popup, false);
+        document.getElementById("x").addEventListener("click", closePopup, false);
+
+        function popup() {
+            console.log("asdf");
+
+            var element = document.getElementById("createPopup");
+            var style = element.style.display;
+            if(element.style.display == "block"){
+                element.style.display == "none";
+            }
+            else{
+                element.style.display = "block";
+            }
+        }
+
+        function closePopup(){
+            var element = document.getElementById("createPopup");
+            element.style.display = "none";
+        }
+
+    </script>
+</body>
+
+</html>
