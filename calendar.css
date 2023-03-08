@@ -1,5 +1,6 @@
 body{
     margin: 0%;
+    background-color: #61876E;
 }
 .header {
     background-color: #61876E;
@@ -39,7 +40,7 @@ body{
 .menu {
     background-color: #EAE7B1;
     color: #3C6255;
-    padding: 1%;
+    padding: 0.5%;
     display: flex;
     text-align: center;
     align-items: baseline;
@@ -53,6 +54,7 @@ body{
     text-align: center;
     color: #EAE7B1;
     font-size: 20px;
+    display: flex;
 }
 
 .arrows:hover {
@@ -73,15 +75,15 @@ body{
 .grid-container {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-    /* background-color: #2196F3; */
-    /* padding: 2%; */
     height: auto;
-
+    width: 60%;
+    float: left;
+    margin-right: 3%;
 }
 
 .grid-item {
     justify-items: start;
-    padding: 35%;
+    padding: 26%;
     font-size: 30px;
     border: 1px solid white;
     width: auto;
@@ -89,17 +91,31 @@ body{
 
 }
 
+.dayName{
+    padding-bottom: 2%;
+}
+
 .popup{
     /* display: none; */
     width: 65%;
-    height: auto;
+    height: 65%;
     position: absolute;
     left: 17.5%;
-    top: 30%;
+    top: 20%;
     padding: 3%;
-    background-color: aquamarine;
+    background-color: #609966;
+    border: 3px solid white;
+    position:-webkit-sticky; 
 }
 
 #createPopup{
     display: none;
+}
+
+
+.side-menu{
+    float: right;
+    border: 1px solid white;
+    width: 40%;
+    margin-top: 1.5%;
 }
