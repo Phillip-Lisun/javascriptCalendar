@@ -1,5 +1,4 @@
 document.getElementById("create").addEventListener("click", popup, false);
-        document.getElementById("x").addEventListener("click", closePopup, false);
 
         function popup() {
             console.log("asdf");
@@ -12,10 +11,14 @@ document.getElementById("create").addEventListener("click", popup, false);
             else{
                 element.style.display = "block";
             }
+
+            document.getElementById("x").addEventListener("click", closePopup, false);
+
         }
 
         function closePopup(){
             var element = document.getElementById("createPopup");
+            element.innerHTML = "<div id='x'>x</div>";
             element.style.display = "none";
         }
 
@@ -72,8 +75,6 @@ document.getElementById("create").addEventListener("click", popup, false);
                 for(var d in days){
                     // You can see console.log() output in your JavaScript debugging tool, like Firebug,
                     // WebWit Inspector, or Dragonfly.
-                    console.log(days[d].toISOString());
-                    console.log(days[d].getDate());
 
                     divs[i].innerHTML = days[d].getDate();
                     i++;
@@ -98,3 +99,57 @@ document.getElementById("create").addEventListener("click", popup, false);
                 }
             }
         }
+
+// ajax.js
+
+function registerAjax() {
+    const first_name = document.getElementById("first_name").value; // Get the username from the form
+    const last_name = document.getElementById("last_name").value; // Get the password from the form
+    const username = document.getElementById("username").value; // Get the password from the form
+    const email = document.getElementById("email").value; // Get the password from the form
+    const pwd = document.getElementById("pwd").value; // Get the password from the form
+    const pwd_check = document.getElementById("pwd_check").value; // Get the password from the form
+
+
+
+    // Make a URL-encoded string for passing POST data:
+    const data = { 'first_name': first_name, 'last_name': last_name, 'username': username, 'email': email, 'pwd': pwd, 'pwd_check': pwd_check};
+
+    fetch("calRegister.php", {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: { 'content-type': 'application/json' }
+        })
+        .then(response => response.json())
+        .then(data => console.log(data.success ? "You've been registered!" : `You were not registered in ${data.message}`))
+        .catch(err => console.error(err));
+        event.preventDefault();
+        closePopup();
+}
+
+
+
+
+
+
+
+//listener and function to create the registration popup
+document.getElementById("login").addEventListener("click", registerPopup, false);
+
+
+function registerPopup() {
+    popup();
+    let popupElement = document.getElementById("createPopup");
+
+
+   
+
+    popupElement.innerHTML  += "<div class='box'><form method='POST'><br><label>First Name: </label><br><input type='text' id='first_name' name='first_name'><br><label>Last Name: </label><br><input type='text' id='last_name' name='last_name'><br><label>Username: </label><br><input type='text' id='username' name='username'><br><label>Email Address: </label><br><input type='email' id='email' name='email'><br><label>Password: </label><br><input type='password' id='pwd' name='pwd'><br><label>Retype Password:</label><br><input type='password' id='pwd_check' name='checkpwd'><br><br><br><br><input class='button' type='submit' value='Register' name='submit' id='registersubmit'><br><br></form></div> " ;        
+    document.getElementById("x").addEventListener("click", closePopup, false);
+    document.getElementById("registersubmit").addEventListener("click", registerAjax, false); // Bind the AJAX call to button click
+
+
+
+
+}
+
