@@ -94,7 +94,7 @@
                         <label>Start time: </label><br><input type='time' id='startTime' name='startTime'><br><br>
                         <label>Description: </label><br><textarea name="description" rows="5" cols="40"
                             placeholder='description'></textarea><br><br>
-                        <input class="button" type='submit' value='Add Event' id='submitButton'
+                        <input class="button" type='submit' value='Add Event' id='eventSubmit'
                             name='submitButton'><br><br>
                     </form>
                 </div>
@@ -117,20 +117,20 @@
                         <label>First Name: </label><br><input type='text' id='first_name' name='first_name'><br><br>
                         <label>Last Name: </label><br><input type='text' id='last_name' name='last_name'><br><br>
                         <label>Username: </label><br><input type='text' id='username' name='username'><br><br>
-                        <label>Email Address: </label><br><input type='email' id='email' name='email'><br><br>
+                        <label>Email Address: </label><br><input type='email' id='email' name='email' required><br><br>
                         <label>Password: </label><br><input type='password' id='pwd' name='pwd'><br><br>
                         <label>Retype Password:</label><br><input type='password' id='pwd_check'
                             name='checkpwd'><br><br>
-                        <input class='button' type='submit' value='Register' name='submit' id='registersubmit'><br><br>
+                        <input class='button' type='submit' value='Register' name='submit' id='registerSubmit'><br><br>
                     </form>
                 </div>
 
                 <div id="loginForm">
                     <div class="sideBarTitle" id="loginTitle">Login</div>
                     <form method="POST"><br>
-                        <label><b>Username: </b><input type="text" name="username"></label><br><br>
-                        <label><b>Password: </b><input type="text" name="password"></label><br><br>
-                        <input class="button" type="submit" value="Login" name="submit">
+                        <label><b>Username: </b><input type="text" id="loginUsername"></label><br><br>
+                        <label><b>Password: </b><input type="text" id="loginPassword"></label><br><br>
+                        <input class="button" type="submit" value="Login" id="loginSubmit">
                     </form>
                 </div>
             </div>

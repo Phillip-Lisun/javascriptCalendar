@@ -117,7 +117,7 @@ function updateCalendar() {
 }
 
 // ajax.js
-function registerAjax() {
+function registerAjax(event) {
     const first_name = document.getElementById("first_name").value; // Get the username from the form
     const last_name = document.getElementById("last_name").value; // Get the password from the form
     const username = document.getElementById("username").value; // Get the password from the form
@@ -125,7 +125,42 @@ function registerAjax() {
     const pwd = document.getElementById("pwd").value; // Get the password from the form
     const pwd_check = document.getElementById("pwd_check").value; // Get the password from the form
 
+    //checks all forms to see that they have been filled out correctly
 
+    if(first_name.length == 0 || first_name.length > 50) {
+        alert("First Name Invalid (Max 50 Characters)");
+        event.preventDefault();
+        return;
+    }
+    if(last_name.length == 0 || last_name.length > 50) {
+        alert("Last Name Invalid (Max 50 Characters)");
+        event.preventDefault();
+        return;
+    }
+    if(username.length == 0 || username.length > 50) {
+        alert("Username Invalid (Max 50 Characters)");
+        event.preventDefault();
+        return;
+    }
+    if(email.length == 0) {
+        alert("Email Required");
+        event.preventDefault();
+        return;
+    }
+    else {
+        let emailRegex = /^[\w!#$%&'*+\/=?^_`{|}~-]+@([\w\-]+(?:\.[\w\-]+)+)$/
+        if(emailRegex.test(email) == false) {
+            alert("Invalid Email");
+            event.preventDefault();
+            return;
+        }
+
+    }
+    if(pwd.length == 0 || pwd_check.length == 0) {
+        alert("Password Required");
+        event.preventDefault();
+        return;
+    }
 
     // Make a URL-encoded string for passing POST data:
     const data = { 'first_name': first_name, 'last_name': last_name, 'username': username, 'email': email, 'pwd': pwd, 'pwd_check': pwd_check };
@@ -136,28 +171,47 @@ function registerAjax() {
         headers: { 'content-type': 'application/json' }
     })
         .then(response => response.json())
-        .then(data => console.log(data.success ? "You've been registered!" : `You were not registered in ${data.message}`))
+        .then(data => data.success ? registeredSuccess() : registeredFailed(data.message))
         .catch(err => console.error(err));
-    event.preventDefault();
-    closePopup();
+
+    function registeredSuccess() {
+        alert("registered!");
+    }
+    function registeredFailed(error) {
+        alert(error);
+    }
+
+     event.preventDefault();
+
+
+    
 }
 
+function loginAjax(event) {
+    const username = document.getElementById("loginUsername").value; // Get the username from the form
+    const password = document.getElementById("loginPassword").value; // Get the password from the form
 
-//listener and function to create the registration popup
-// document.getElementById("login").addEventListener("click", registerPopup, false);
+    // Make a URL-encoded string for passing POST data:
+    const data = { 'loginUsername': username, 'loginPassword': password };
 
-// function registerPopup() {
-//     document.getElementById("login").removeEventListener("click", registerPopup, false);
-//     popup();
-//     let popupElement = document.getElementById("createPopup");
+    fetch("calLogin.php", {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: { 'content-type': 'application/json' }
+        })
+        .then(response => response.json())
+        .then(data => data.success ? loginSuccess() : loginFailed(data.message))
+        .catch(err => console.error(err));
 
+        function loginSuccess() {
+            alert("Logged In!");
+        }
+        function loginFailed(error) {
+            alert(error);
+        }
 
-//     // popupElement.innerHTML += "<div class='box'><form method='POST'><br><label>First Name: </label><br><input type='text' id='first_name' name='first_name'><br><label>Last Name: </label><br><input type='text' id='last_name' name='last_name'><br><label>Username: </label><br><input type='text' id='username' name='username'><br><label>Email Address: </label><br><input type='email' id='email' name='email'><br><label>Password: </label><br><input type='password' id='pwd' name='pwd'><br><label>Retype Password:</label><br><input type='password' id='pwd_check' name='checkpwd'><br><br><br><br><input class='button' type='submit' value='Register' name='submit' id='registersubmit'><br><br></form></div> ";
-//     // document.getElementById("x").addEventListener("click", closePopup, false);
-//     document.getElementById("registersubmit").addEventListener("click", registerAjax, false); // Bind the AJAX call to button click
-// }
-
-
+        event.preventDefault();
+}
 
 // ADD EVENTLISTENER TO EVERY ELEMENT IN GRID, IF IT IS CLICKED EXECUTE FUNCTION
 Window.onload = setEventListeners();
@@ -267,5 +321,33 @@ function displayAddForm() {
         document.getElementById("addForm").style.display = "none";
         document.getElementById("currentDateEvents").style.display = "block";
     }
+}
+
+//WHEN REGISTER BUTTON HAS BEEN CLICKED
+document.getElementById("register").addEventListener('click', displayRegisterForm, false);
+
+function displayRegisterForm() {
+
+    document.getElementById("addForm").style.display = "none";
+    document.getElementById("loginForm").style.display = "none";
+    document.getElementById("registerForm").style.display = "block";
+    document.getElementById("currentDateEvents").style.display = "none";
+
+    document.getElementById("registerSubmit").addEventListener('click', registerAjax, false);
+}
+
+//WHEN LOGIN BUTTON HAS BEEN CLICKED
+document.getElementById("login").addEventListener('click', displayLoginForm, false);
+
+Window.onload = displayLoginForm();
+
+function displayLoginForm() {
+
+    document.getElementById("addForm").style.display = "none";
+    document.getElementById("loginForm").style.display = "block";
+    document.getElementById("registerForm").style.display = "none";
+    document.getElementById("currentDateEvents").style.display = "none";
+
+    document.getElementById("loginSubmit").addEventListener("click", loginAjax, false);
 }
 

@@ -29,7 +29,48 @@
 	$password = password_hash($pwd, PASSWORD_DEFAULT);
 
 	if (!password_verify($pwd_check, $password)) {
-		echo "Passwords do not match";
+		echo json_encode(array(
+			"success" => false,
+			"message" => "Passwords Do Not Match"
+		));
+		exit;
+	}
+
+	// CHECK IF USERNAME IS ALREADY TAKEN
+	$stmt = $mysqli->prepare("SELECT COUNT(*) FROM users WHERE username=?");
+
+	$user = $_POST['username'];
+	$stmt->bind_param('s', $username);
+	$stmt->execute();
+
+	$stmt->bind_result($cnt);
+	$stmt->fetch();
+	$stmt->close();
+
+	if ($cnt > 0) {
+		echo json_encode(array(
+			"success" => false,
+			"message" => "Username Taken"
+		));
+		exit;
+	}
+
+
+	// CHECK IF EMAIL IS ALREADY TAKEN
+	$stmt = $mysqli->prepare("SELECT COUNT(*) FROM users WHERE email=?");
+
+	$stmt->bind_param('s', $email);
+	$stmt->execute();
+
+	$stmt->bind_result($cnt);
+	$stmt->fetch();
+	$stmt->close();
+
+	if ($cnt > 0) {
+		echo json_encode(array(
+			"success" => false,
+			"message" => "Email Taken"
+		));
 		exit;
 	}
 
