@@ -186,6 +186,7 @@ function loginAjax(event) {
             document.getElementById("welcome").innerText = "Hello, " + username;
 
             document.getElementById("login").style.display = "none";
+            document.getElementById("register").style.display = "none";
             document.getElementById("logout").style.display = "block";
         }
         function loginFailed(error) {

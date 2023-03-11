@@ -59,6 +59,7 @@ body {
 
 #register {
     float: right;
+    display: block;
 }
 
 .menu {
