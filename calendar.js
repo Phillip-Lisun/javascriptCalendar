@@ -1,34 +1,11 @@
-// document.getElementById("create").addEventListener("click", popup, false);
-
-// function popup() {
-//     console.log("asdf");
-
-//     var element = document.getElementById("createPopup");
-//     var style = element.style.display;
-//     if (element.style.display == "block") {
-//         element.style.display == "none";
-//     }
-//     else {
-//         element.style.display = "block";
-//     }
-
-//     document.getElementById("x").addEventListener("click", closePopup, false);
-
-// }
-
-// function closePopup() {
-//     var element = document.getElementById("createPopup");
-//     element.innerHTML = "<div id='x'>x</div>";
-//     element.style.display = "none";
-//     document.getElementById("login").addEventListener("click", registerPopup, false);
-// }
-
-
-
+//copied calendar functions
 (function () { Date.prototype.deltaDays = function (c) { return new Date(this.getFullYear(), this.getMonth(), this.getDate() + c) }; Date.prototype.getSunday = function () { return this.deltaDays(-1 * this.getDay()) } })();
 function Week(c) { this.sunday = c.getSunday(); this.nextWeek = function () { return new Week(this.sunday.deltaDays(7)) }; this.prevWeek = function () { return new Week(this.sunday.deltaDays(-7)) }; this.contains = function (b) { return this.sunday.valueOf() === b.getSunday().valueOf() }; this.getDates = function () { for (var b = [], a = 0; 7 > a; a++)b.push(this.sunday.deltaDays(a)); return b } }
 function Month(c, b) { this.year = c; this.month = b; this.nextMonth = function () { return new Month(c + Math.floor((b + 1) / 12), (b + 1) % 12) }; this.prevMonth = function () { return new Month(c + Math.floor((b - 1) / 12), (b + 11) % 12) }; this.getDateObject = function (a) { return new Date(this.year, this.month, a) }; this.getWeeks = function () { var a = this.getDateObject(1), b = this.nextMonth().getDateObject(0), c = [], a = new Week(a); for (c.push(a); !a.contains(b);)a = a.nextWeek(), c.push(a); return c } };
 
+
+Window.onload = document.getElementById("logout").style.display = "none";
+//gets current date & sets 
 const date = new Date();
 let currentMonth = new Month((date.getFullYear()), (date.getMonth())); // October 2017
 Window.onload = updateCalendar();
@@ -187,6 +164,7 @@ function registerAjax(event) {
     
 }
 
+//login functionality 
 function loginAjax(event) {
     const username = document.getElementById("loginUsername").value; // Get the username from the form
     const password = document.getElementById("loginPassword").value; // Get the password from the form
@@ -205,6 +183,10 @@ function loginAjax(event) {
 
         function loginSuccess() {
             alert("Logged In!");
+            document.getElementById("welcome").innerText = "Hello, " + username;
+
+            document.getElementById("login").style.display = "none";
+            document.getElementById("logout").style.display = "block";
         }
         function loginFailed(error) {
             alert(error);

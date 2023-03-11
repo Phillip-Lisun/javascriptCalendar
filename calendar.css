@@ -49,6 +49,12 @@ body {
 
 #login {
     float: left;
+    display: block;
+}
+
+#logout {
+    float: left;
+    display: none;
 }
 
 #register {
