@@ -270,7 +270,7 @@ function addEventAjax(event) {
 
     const date = startDate.split('-');
     const startYear = date[0];
-    const startMonth = date[1];
+    const startMonth = date[1] - 1;
     const startDay = date[2]; 
 
     const data = { 'title': eventName, 'day': startDay, 'month': startMonth, 'year': startYear, 'time': startTime, 'description': description, 'user_id': Window.user_id };
@@ -385,8 +385,74 @@ function setEventListeners() {
             document.getElementById("loginForm").style.display = "none";
             document.getElementById("registerForm").style.display = "none";
             document.getElementById("currentDateEvents").style.display = "block";
+
+            showEvents(displayCurrentYear, displayCurrentMonth, displayCurrentDay);
+
         }, false);
     }
+}
+
+function showEvents(year, month, day) {
+
+    const data = {'year': year, 'month': month, 'day': day, 'user_id': Window.user_id};
+
+    fetch("calGetEvents.php", {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: { 'content-type': 'application/json' }
+    })
+        .then(response => response.json())
+        .then(data => getSuccess(data))
+        .catch(err => console.error(err));
+
+    function getSuccess(data) {
+
+       i = 0;
+       document.getElementById("dateEvents").innerHTML = "<br>";
+
+
+       while(i < data.length) {
+
+        document.getElementById("dateEvents").innerHTML += "<strong>" + data[i] + "</strong>" + " at " + timeConvert(data[i + 1]) + "<br><br>";
+        i += 3;
+       }
+       console.log(data);
+
+       if(data.length == 0) {
+        document.getElementById("dateEvents").innerText = "YOU DONT HAVE ANY EVENTS FOR THIS DAY!!";
+        } 
+        document.getElementById("dateEvents").innerHTML += "<div class='button' id='addEventButton'>Add Event</div>";
+        document.getElementById("addEventButton").addEventListener('click', displayAddForm, false);
+
+    }
+    function getFailed(message) {
+        alert(message);
+    }
+
+
+
+
+}
+
+function timeConvert(time) {
+    pm = false;
+    append = "AM";
+    time = time.split(":");
+    console.log(time);
+
+    hour = time[0];
+    if(hour > 12) {
+        hour = hour - 12;
+        pm = true;
+    }
+
+    if(pm == true) {
+        append = "PM";
+    }
+
+    result = hour + ":" + time[1] + " " + append;
+    return result;
+
 }
 
 
