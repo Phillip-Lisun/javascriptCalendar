@@ -41,7 +41,8 @@ if($verified == true){
 	$_SESSION['token'] = bin2hex(openssl_random_pseudo_bytes(32)); 
 
 	echo json_encode(array(
-		"success" => true
+		"success" => true,
+		"user_id" => $_SESSION['user_id']
 	));
 	exit;
 }else{

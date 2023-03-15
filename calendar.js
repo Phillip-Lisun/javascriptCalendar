@@ -26,6 +26,35 @@ document.getElementById("leftArrow").addEventListener("click", function (event) 
 // This updateCalendar() function only alerts the dates in the currently specified month.  You need to write
 // it to modify the DOM (optionally using jQuery) to display the days and weeks in the current month.
 
+Window.onload = getSessionId();
+
+function getSessionId() {
+    const data = { 'request': 'userID'};
+
+    fetch("calGetId.php", {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: { 'content-type': 'application/json' }
+    })
+        .then(response => response.json())
+        .then(data => data.success ? requestSuccess(data.user_id, data.username) : requestFailed(data.message))
+        .catch(err => console.error(err));
+
+    function requestSuccess(user_id, username) {
+        Window.user_id = user_id;
+        Window.username = username;
+        console.log(Window.username);
+        console.log(Window.user_id);
+        loginSuccess(Window.user_id, Window.username);
+    }
+    function requestFailed(error) {
+        console.log(error);
+    }
+
+
+
+}
+
 function updateCalendar() {
 
     //copied code beginning https://bobbyhadz.com/blog/javascript-convert-month-number-to-name
@@ -178,23 +207,96 @@ function loginAjax(event) {
             headers: { 'content-type': 'application/json' }
         })
         .then(response => response.json())
-        .then(data => data.success ? loginSuccess() : loginFailed(data.message))
+        .then(data => data.success ? loginSuccess(data.user_id, username) : loginFailed(data.message))
         .catch(err => console.error(err));
 
-        function loginSuccess() {
-            alert("Logged In!");
-            document.getElementById("welcome").innerText = "Hello, " + username;
-
-            document.getElementById("login").style.display = "none";
-            document.getElementById("register").style.display = "none";
-            document.getElementById("logout").style.display = "block";
-        }
         function loginFailed(error) {
             alert(error);
         }
 
         event.preventDefault();
 }
+
+function loginSuccess(user_id, username) {
+    document.getElementById("welcome").innerText = "Hello, " + username;
+
+    document.getElementById("login").style.display = "none";
+    document.getElementById("register").style.display = "none";
+    document.getElementById("logout").style.display = "block";
+
+    document.getElementById("logout").addEventListener('click', logoutAjax, false);
+    Window.user_id = user_id;
+    Window.username = username;
+    
+}
+
+function logoutAjax(event) {
+    const data = {'request' : 'logout'};
+
+
+    fetch("calGetId.php", {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: { 'content-type': 'application/json' }
+    })
+        .then(response => response.json())
+        .then(data => data.success ? requestSuccess() : requestFailed())
+        .catch(err => console.error(err));
+
+    function requestSuccess() {
+        Window.user_id = -1
+
+        document.getElementById("welcome").innerText = "Welcome";
+
+        document.getElementById("login").style.display = "block";
+        document.getElementById("register").style.display = "block";
+        document.getElementById("logout").style.display = "none";
+    }
+    function requestFailed() {
+        alert("error");
+    }
+
+    event.preventDefault();
+}
+
+//adds event to database
+function addEventAjax(event) {
+
+    const eventName = document.getElementById("eventName").value;
+    const startDate = document.getElementById("startDate").value;
+    const startTime = document.getElementById("startTime").value;
+    const description = document.getElementById("eventDesc").value;
+    console.log("variables set");
+
+    const date = startDate.split('-');
+    const startYear = date[0];
+    const startMonth = date[1];
+    const startDay = date[2]; 
+
+    const data = { 'title': eventName, 'day': startDay, 'month': startMonth, 'year': startYear, 'time': startTime, 'description': description, 'user_id': Window.user_id };
+
+    fetch("calAddEvent.php", {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: { 'content-type': 'application/json' }
+    })
+        .then(response => response.json())
+        .then(data => data.success ? addSuccess() : addFailed(data.message))
+        .catch(err => console.error(err));
+
+    function addSuccess() {
+        alert("event added!");
+    }
+    function addFailed(message) {
+        alert(message);
+    }
+
+
+    event.preventDefault();
+
+
+}
+
 
 // ADD EVENTLISTENER TO EVERY ELEMENT IN GRID, IF IT IS CLICKED EXECUTE FUNCTION
 Window.onload = setEventListeners();
@@ -297,6 +399,7 @@ function displayAddForm() {
     if (document.getElementById("addForm").style.display == "none") {
         document.getElementById("addForm").style.display = "block";
         document.getElementById("currentDateEvents").style.display = "none";
+        document.getElementById("eventSubmit").addEventListener("click", addEventAjax, false);
     }
 
     // HIDE ADD EVENT FORM, SHOW EVENTS FROM SELECTED DAY
