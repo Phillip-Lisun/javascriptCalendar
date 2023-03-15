@@ -416,7 +416,6 @@ function showEvents(year, month, day) {
         document.getElementById("dateEvents").innerHTML += "<strong>" + data[i] + "</strong>" + " at " + timeConvert(data[i + 1]) + "<br><br>";
         i += 3;
        }
-       console.log(data);
 
        if(data.length == 0) {
         document.getElementById("dateEvents").innerText = "YOU DONT HAVE ANY EVENTS FOR THIS DAY!!";
