@@ -407,21 +407,37 @@ function showEvents(year, month, day) {
 
     function getSuccess(data) {
 
-       i = 0;
+       let i = 0;
        document.getElementById("dateEvents").innerHTML = "<br>";
 
 
-       while(i < data.length) {
+       while((i + 2) < data.length) {
 
-        document.getElementById("dateEvents").innerHTML += "<strong>" + data[i] + "</strong>" + " at " + timeConvert(data[i + 1]) + "<br><br>";
-        i += 3;
+            document.getElementById("dateEvents").innerHTML += "<strong>" + data[i] + "</strong>" + " at " + timeConvert(data[i + 1]) + "<br><br>";
+
+            document.getElementById('dateEvents').innerHTML += "<br> <div class='button' id='" + data[i+2] + "'>View</div> <br>";
+
+            // let eventId = data[i+2]; //this is the loop to add the event listeners, but it wasn't working -pl
+            // console.log(eventId);
+            // document.getElementById(eventId).addEventListener('click', e => {
+            //     alert("I got here");
+            //     console.log(e.target.id);
+            //     e.preventDefault();
+
+
+            // });
+
+            i += 3;
+
        }
 
        if(data.length == 0) {
         document.getElementById("dateEvents").innerText = "YOU DONT HAVE ANY EVENTS FOR THIS DAY!!";
         } 
+  
         document.getElementById("dateEvents").innerHTML += "<div class='button' id='addEventButton'>Add Event</div>";
         document.getElementById("addEventButton").addEventListener('click', displayAddForm, false);
+
 
     }
     function getFailed(message) {
@@ -431,13 +447,16 @@ function showEvents(year, month, day) {
 
 
 
+
+
 }
+
+
 
 function timeConvert(time) {
     pm = false;
     append = "AM";
     time = time.split(":");
-    console.log(time);
 
     hour = time[0];
     if(hour > 12) {

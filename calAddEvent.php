@@ -21,7 +21,7 @@ $description = $json_obj['description'];
 $user_id = $json_obj['user_id'];
 //This is equivalent to what you previously did with $_POST['username'] and $_POST['password']
 
-$stmt = $mysqli->prepare("insert into events (title, day, month, year, time, user_id) values (?, ?, ?, ?, ?, ?)");
+$stmt = $mysqli->prepare("insert into events (title, day, month, year, time, user_id, description) values (?, ?, ?, ?, ?, ?, ?)");
 
 if (!$stmt) {
     $message = printf("Query Prep Failed: %s\n", $mysqli->error);
@@ -33,7 +33,7 @@ if (!$stmt) {
     exit;
 }
 
-$stmt->bind_param('siiisi', $title, $day, $month, $year, $time, $user_id);
+$stmt->bind_param('siiisis', $title, $day, $month, $year, $time, $user_id, $description);
 if($stmt->execute()) {
     $added = true;
 }
