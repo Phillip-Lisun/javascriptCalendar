@@ -497,7 +497,7 @@ function showEvents(year, month, day) {
         }
 
         if (data.length == 0) {
-            document.getElementById("dateEvents").innerText = "YOU DONT HAVE ANY EVENTS FOR THIS DAY!!";
+            document.getElementById("dateEvents").innerText = "<br>YOU DONT HAVE ANY EVENTS FOR THIS DAY!!";
         }
 
         document.getElementById("dateEvents").innerHTML += "<div class='button' id='addEventButton'>Add Event</div>";

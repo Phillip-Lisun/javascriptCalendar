@@ -112,11 +112,14 @@ function timeConvert(time) {
 }
 
 
+let user_id = -1;
+let username = "";
+let previousElement = '14';
+let previousDay = 15;
+
 
 // ADD EVENTLISTENER TO EVERY ELEMENT IN GRID, IF IT IS CLICKED EXECUTE FUNCTION
 Window.onload = setEventListeners();
-let previousElement = '14';
-let previousDay = 15;
 
 function setEventListeners() {
 
@@ -130,7 +133,6 @@ function setEventListeners() {
             let displayCurrentYear = currentMonth.year;
 
             // CONVERT ID TO INT TO COMPARE LATER ON
-
             let currentElement = e.target.id;
             let currentElementId = parseInt(currentElement);
 
@@ -182,6 +184,9 @@ function setEventListeners() {
 
 
             // CHANGE THE PREVIOUS DAY NOT IN THE CURRENT MONTH TO LIGHT GREEN
+            if (previousDay == currentDayAsInt && previousElement == currentElementId) {
+                document.getElementById(previousElement).style.backgroundColor = "#61876E";
+            }
             if ((previousElement < 8 && previousDay > 15) || (previousElement > 28 && previousDay < 15)) {
                 console.log("current id: " + currentElementId + "  currentDay: " + currentDayAsInt + "  previ: " + previousElement);
                 document.getElementById(previousElement).style.backgroundColor = "#A6BB8D";
@@ -195,15 +200,18 @@ function setEventListeners() {
             previousDay = displayCurrentDay;
             previousElement = currentElement;
 
+            getSessionId();
+
             if (user_id != -1) {
                 // CONTROL WHAT IS SHOWN ON THE SIDE
-                showEvents(displayCurrentMonth, displayCurrentDay, displayCurrentYear);
+                showEvents(displayCurrentYear, displayCurrentMonth, displayCurrentDay);
             }
             else {
                 document.getElementById("addForm").style.display = "none";
                 document.getElementById("loginForm").style.display = "block";
                 document.getElementById("registerForm").style.display = "none";
                 document.getElementById("currentDateEvents").style.display = "none";
+                document.getElementById("viewEvent").style.display = "none";
             }
         }, false);
     }
@@ -223,12 +231,12 @@ function getSessionId() {
         .then(data => data.success ? requestSuccess(data.user_id, data.username) : requestFailed(data.message))
         .catch(err => console.error(err));
 
-    function requestSuccess(user_id, username) {
-        Window.user_id = user_id;
-        Window.username = username;
-        console.log(Window.username);
-        console.log(Window.user_id);
-        loginSuccess(Window.user_id, Window.username);
+    function requestSuccess(curr_user_id, curr_username) {
+        user_id = curr_user_id;
+        username = curr_username;
+        console.log(username);
+        console.log(user_id);
+        loginSuccess(user_id, username);
     }
     function requestFailed(error) {
         console.log(error);
@@ -248,11 +256,19 @@ function displayLoginForm() {
     document.getElementById("loginForm").style.display = "block";
     document.getElementById("registerForm").style.display = "none";
     document.getElementById("currentDateEvents").style.display = "none";
-    
-    // document.getElementById("registerLink").addEventListener('click', displayRegisterForm, false);
-    document.getElementById("loginSubmit").addEventListener("click", loginAjax, false);
-    document.getElementById("registerLink").addEventListener('click', displayRegisterForm, false);
+    document.getElementById("viewEvenet").style.display = "none";
 
+    getSessionId();
+    // IF USER IS ALREADY LOGGED IN
+    if (user_id != -1) {
+        loginSuccess(user_id, username);
+        console.log("USER ID:" + user_id);
+    }
+    else {
+        // document.getElementById("registerLink").addEventListener('click', displayRegisterForm, false);
+        document.getElementById("loginSubmit").addEventListener("click", loginAjax, false);
+        document.getElementById("registerLink").addEventListener('click', displayRegisterForm, false);
+    }
 }
 
 //login functionality 
@@ -287,8 +303,8 @@ function loginSuccess(user_id, username) {
     document.getElementById("logout").style.display = "block";
 
     document.getElementById("logout").addEventListener('click', logoutAjax, false);
-    Window.user_id = user_id;
-    Window.username = username;
+    user_id = user_id;
+    username = username;
 
     // display the date that its currently on,
     // SIDEBAR DISPLAYS
@@ -296,6 +312,7 @@ function loginSuccess(user_id, username) {
     document.getElementById("loginForm").style.display = "none";
     document.getElementById("registerForm").style.display = "none";
     document.getElementById("currentDateEvents").style.display = "block";
+    document.getElementById("viewEvenet").style.display = "none";
 }
 
 // LOGOUT FUNCTIONS
@@ -311,7 +328,7 @@ function logoutAjax(event) {
         .catch(err => console.error(err));
 
     function requestSuccess() {
-        Window.user_id = -1
+        user_id = -1
         // HEADER DISPLAYS
         document.getElementById("welcome").innerText = "Welcome";
         // document.getElementById("login").style.display = "block";
@@ -323,6 +340,7 @@ function logoutAjax(event) {
         document.getElementById("loginForm").style.display = "block";
         document.getElementById("registerForm").style.display = "none";
         document.getElementById("currentDateEvents").style.display = "none";
+        document.getElementById("viewEvenet").style.display = "none";
     }
     function requestFailed() {
         alert("error");
@@ -345,6 +363,7 @@ function displayRegisterForm() {
     document.getElementById("loginForm").style.display = "none";
     document.getElementById("registerForm").style.display = "block";
     document.getElementById("currentDateEvents").style.display = "none";
+    document.getElementById("viewEvenet").style.display = "none";
 
     document.getElementById("registerSubmit").addEventListener('click', registerAjax, false);
     document.getElementById("loginLink").addEventListener('click', displayLoginForm, false);
@@ -449,15 +468,18 @@ function displayCurrentDate() {
     let sideBar = document.getElementById("dateTitle");
     sideBar.textContent = monthName + " " + todayDay + ", " + todayYear;
 
-    if (Window.user_id != -1) {
+    getSessionId();
+
+    if (user_id != -1) {
         // CONTROL WHAT IS SHOWN ON THE SIDE
         showEvents(todayYear, todayMonth, todayDay);
     }
     else {
         document.getElementById("addForm").style.display = "none";
-        document.getElementById("loginForm").style.display = "block";
+        document.getElementById("loginForm").style.display = "none";
         document.getElementById("registerForm").style.display = "none";
-        document.getElementById("currentDateEvents").style.display = "none";
+        document.getElementById("currentDateEvents").style.display = "block";
+        document.getElementById("viewEvenet").style.display = "none";
     }
 }
 
@@ -471,6 +493,7 @@ function displayAddForm() {
     if (document.getElementById("addForm").style.display == "none") {
         document.getElementById("addForm").style.display = "block";
         document.getElementById("currentDateEvents").style.display = "none";
+        document.getElementById("viewEvenet").style.display = "none";
         document.getElementById("eventSubmit").addEventListener("click", addEventAjax, false);
     }
 
@@ -478,6 +501,7 @@ function displayAddForm() {
     else {
         document.getElementById("addForm").style.display = "none";
         document.getElementById("currentDateEvents").style.display = "block";
+        document.getElementById("viewEvenet").style.display = "none";
     }
 }
 
@@ -497,7 +521,7 @@ function addEventAjax(event) {
     const startMonth = date[1] - 1;
     const startDay = date[2];
 
-    const data = { 'title': eventName, 'day': startDay, 'month': startMonth, 'year': startYear, 'time': startTime, 'description': description, 'user_id': Window.user_id };
+    const data = { 'title': eventName, 'day': startDay, 'month': startMonth, 'year': startYear, 'time': startTime, 'description': description, 'user_id': user_id };
 
     fetch("calAddEvent.php", {
         method: 'POST',
@@ -510,6 +534,7 @@ function addEventAjax(event) {
 
     function addSuccess() {
         alert("event added!");
+        showEvents(startYear, startMonth, startDay);
     }
     function addFailed(message) {
         alert(message);
@@ -524,8 +549,9 @@ function showEvents(year, month, day) {
     document.getElementById("loginForm").style.display = "none";
     document.getElementById("registerForm").style.display = "none";
     document.getElementById("currentDateEvents").style.display = "block";
+    document.getElementById("viewEvent").style.display = "none";
 
-    const data = { 'year': year, 'month': month, 'day': day, 'user_id': Window.user_id };
+    const data = { 'year': year, 'month': month, 'day': day, 'user_id': user_id };
 
     fetch("calGetEvents.php", {
         method: 'POST',
@@ -537,13 +563,9 @@ function showEvents(year, month, day) {
             console.log('Success:', JSON.stringify(data))
             getSuccess(data);
         })
-        // .then(response => console.log('Success:', JSON.stringify(response)))
-        // .then(data => console.log("data: " + data))
-        // .then(data => getSuccess(data))
         .catch(err => console.error(err));
 
     function getSuccess(data) {
-        console.log("hi");
 
         let i = 0;
         document.getElementById("dateEvents").innerHTML = "<br>";
@@ -551,37 +573,49 @@ function showEvents(year, month, day) {
 
         while ((i + 2) < data.length) {
 
-            document.getElementById("dateEvents").innerHTML += "<strong>" + data[i] + "</strong>" + " at " + timeConvert(data[i + 1]) + "<br><br>";
-
-            document.getElementById('dateEvents').innerHTML += "<br> <div class='button' id='" + data[i + 2] + "'>View</div> <br>";
-
-            // let eventId = data[i+2]; //this is the loop to add the event listeners, but it wasn't working -pl
-            // console.log(eventId);
-            // document.getElementById(eventId).addEventListener('click', e => {
-            //     alert("I got here");
-            //     console.log(e.target.id);
-            //     e.preventDefault();
-
-
-            // });
-
+            document.getElementById("dateEvents").innerHTML += "<strong>" + data[i] + "</strong>" + " at " + timeConvert(data[i + 1]) + "<br>";
+            document.getElementById('dateEvents').innerHTML += "<br> <div class='viewButton' id='" + data[i] + "'>View</div> <br>";
             i += 3;
-
         }
 
         if (data.length == 0) {
-            document.getElementById("dateEvents").innerText = "YOU DONT HAVE ANY EVENTS FOR THIS DAY!!";
+            document.getElementById("dateEvents").innerText += "YOU DONT HAVE ANY EVENTS FOR THIS DAY!!";
         }
 
         document.getElementById("dateEvents").innerHTML += "<div class='button' id='addEventButton'>Add Event</div>";
         document.getElementById("addEventButton").addEventListener('click', displayAddForm, false);
 
-
+        viewEventListeners();
     }
     function getFailed(message) {
         alert(message);
     }
+}
 
 
+function viewEventListeners() {
 
+    let viewButtonArray = document.getElementsByClassName("viewButton");
+    let sideBar = document.getElementById("viewTitle");
+    let displayCurrentMonth = currentMonth.getDateObject;
+
+    for (let i = 0; i < viewButtonArray.length; i++) {
+        viewButtonArray[i].addEventListener('click', e => {
+            let currentElement = e.target.id;
+            let eventName = document.getElementById(currentElement).value;
+
+            console.log(currentElement);
+
+            document.getElementById("addForm").style.display = "none";
+            document.getElementById("loginForm").style.display = "none";
+            document.getElementById("registerForm").style.display = "none";
+            document.getElementById("currentDateEvents").style.display = "none";
+            document.getElementById("viewEvent").style.display = "block";
+
+            sideBar.innerHTML = currentElement;
+            // document.getElementById(loginTitle).innerHTML += "<div class='button' id='showEventsButton'>Back to events</div>";;
+            // document.getElementById("showEventsButton").addEventListener('click', showEvents(year, month, day), false);
+
+        }, false);
+    }
 }

@@ -182,3 +182,7 @@ body {
 #loginForm {
     display: block;
 }
+
+#viewEvent{
+    display: none;
+}
