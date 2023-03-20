@@ -46,6 +46,24 @@ body {
     color: #3C6255;
 }
 
+.eventButton{
+    padding: 2%;
+    margin-top: 1%;
+    border: 1px solid #EAE7B1;
+    border-radius: 5px;
+    background-color: #61876E;
+    color: #EAE7B1;
+    font-family: 'Times New Roman', Times, serif;
+    text-align: center;
+}
+
+.eventButton:hover {
+    cursor: pointer;
+    background-color: #EAE7B1;
+    color: #3C6255;
+}
+
+
 #login {
     float: left;
     display: block;
@@ -184,5 +202,13 @@ body {
 }
 
 #viewEvent{
+    display: none;
+}
+
+.viewEventBody{
+    text-align: left;
+}
+
+#editPost{
     display: none;
 }
