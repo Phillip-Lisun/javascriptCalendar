@@ -53,11 +53,6 @@ while($row) {
 $stmt->close();
 
 
-
-
-
-
-
 // Check to see if the username and password are valid.  (You learned how to do this in Module 3.)
 
 if($fetched == true){

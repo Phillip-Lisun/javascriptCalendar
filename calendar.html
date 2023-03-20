@@ -11,16 +11,17 @@
 
 <body>
     <div class="header">
-        <div id="create">
-            <div class="button" id="login">Login</div><div class="button" id="logout">Logout</div>
-        </div>
         <div class="welcome" id="welcome">
             Hello
             <!-- ADD USER'S NAME IF LOGGED IN -->
         </div>
-        <div class="addButton">
-            <div class="button" id="register">Register</div>
+        <div id="create">
+            <!-- <div class="button" id="login">Login</div> -->
+            <div class="button" id="logout">Logout</div>
         </div>
+        <!-- <div class="addButton">
+            <div class="button" id="register">Register</div>
+        </div> -->
     </div>
 
     <div class="menu">
@@ -123,6 +124,7 @@
                             name='checkpwd'><br><br>
                         <input class='button' type='submit' value='Register' name='submit' id='registerSubmit'><br><br>
                     </form>
+                    <div id="loginLink"><u>Click here already have an account!</u></div>
                 </div>
 
                 <div id="loginForm">
@@ -130,8 +132,10 @@
                     <form method="POST"><br>
                         <label><b>Username: </b><input type="text" id="loginUsername"></label><br><br>
                         <label><b>Password: </b><input type="text" id="loginPassword"></label><br><br>
-                        <input class="button" type="submit" value="Login" id="loginSubmit">
+                        <input class="button" type="submit" value="Login" id="loginSubmit"><br>
                     </form>
+                    <br><br>
+                    <div id="registerLink"><u>Click here if you don't have an account!</u></div>
                 </div>
             </div>
         </div>
@@ -140,7 +144,7 @@
     <!-- <div class="popup" id="createPopup">
         <div id="x">x</div>
     </div> -->
-    <script src="calendar.js"></script>
+    <script src="update.js"></script>
 </body>
 
 </html>

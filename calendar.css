@@ -29,7 +29,7 @@ body {
 
 
 .button {
-    padding: 3%;
+    padding: 2%;
     margin-top: 1%;
     border: 1px solid #EAE7B1;
     background-color: #61876E;
@@ -59,6 +59,10 @@ body {
 #register {
     float: right;
     display: block;
+}
+
+#registerLink:hover{
+    cursor: pointer;
 }
 
 .menu {

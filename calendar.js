@@ -29,7 +29,7 @@ document.getElementById("leftArrow").addEventListener("click", function (event) 
 Window.onload = getSessionId();
 
 function getSessionId() {
-    const data = { 'request': 'userID'};
+    const data = { 'request': 'userID' };
 
     fetch("calGetId.php", {
         method: 'POST',
@@ -50,8 +50,6 @@ function getSessionId() {
     function requestFailed(error) {
         console.log(error);
     }
-
-
 
 }
 
@@ -133,36 +131,36 @@ function registerAjax(event) {
 
     //checks all forms to see that they have been filled out correctly
 
-    if(first_name.length == 0 || first_name.length > 50) {
+    if (first_name.length == 0 || first_name.length > 50) {
         alert("First Name Invalid (Max 50 Characters)");
         event.preventDefault();
         return;
     }
-    if(last_name.length == 0 || last_name.length > 50) {
+    if (last_name.length == 0 || last_name.length > 50) {
         alert("Last Name Invalid (Max 50 Characters)");
         event.preventDefault();
         return;
     }
-    if(username.length == 0 || username.length > 50) {
+    if (username.length == 0 || username.length > 50) {
         alert("Username Invalid (Max 50 Characters)");
         event.preventDefault();
         return;
     }
-    if(email.length == 0) {
+    if (email.length == 0) {
         alert("Email Required");
         event.preventDefault();
         return;
     }
     else {
         let emailRegex = /^[\w!#$%&'*+\/=?^_`{|}~-]+@([\w\-]+(?:\.[\w\-]+)+)$/
-        if(emailRegex.test(email) == false) {
+        if (emailRegex.test(email) == false) {
             alert("Invalid Email");
             event.preventDefault();
             return;
         }
 
     }
-    if(pwd.length == 0 || pwd_check.length == 0) {
+    if (pwd.length == 0 || pwd_check.length == 0) {
         alert("Password Required");
         event.preventDefault();
         return;
@@ -177,20 +175,17 @@ function registerAjax(event) {
         headers: { 'content-type': 'application/json' }
     })
         .then(response => response.json())
-        .then(data => data.success ? registeredSuccess() : registeredFailed(data.message))
+        .then(data => data.success ? loginSuccess(data.user_id, username) : registeredFailed(data.message))
         .catch(err => console.error(err));
 
-    function registeredSuccess() {
-        alert("registered!");
-    }
+    // function registeredSuccess() {
+    //     alert("registered!");
+    // }
     function registeredFailed(error) {
         alert(error);
     }
 
-     event.preventDefault();
-
-
-    
+    event.preventDefault();
 }
 
 //login functionality 
@@ -202,24 +197,26 @@ function loginAjax(event) {
     const data = { 'loginUsername': username, 'loginPassword': password };
 
     fetch("calLogin.php", {
-            method: 'POST',
-            body: JSON.stringify(data),
-            headers: { 'content-type': 'application/json' }
-        })
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: { 'content-type': 'application/json' }
+    })
         .then(response => response.json())
         .then(data => data.success ? loginSuccess(data.user_id, username) : loginFailed(data.message))
         .catch(err => console.error(err));
 
-        function loginFailed(error) {
-            alert(error);
-        }
+    function loginFailed(error) {
+        alert(error);
+    }
 
-        event.preventDefault();
+    event.preventDefault();
 }
 
-function loginSuccess(user_id, username) {
-    document.getElementById("welcome").innerText = "Hello, " + username;
 
+let loggedIn = false;
+function loginSuccess(user_id, username) {
+    // UPDATE HEADER
+    document.getElementById("welcome").innerText = "Hello, " + username;
     document.getElementById("login").style.display = "none";
     document.getElementById("register").style.display = "none";
     document.getElementById("logout").style.display = "block";
@@ -227,13 +224,19 @@ function loginSuccess(user_id, username) {
     document.getElementById("logout").addEventListener('click', logoutAjax, false);
     Window.user_id = user_id;
     Window.username = username;
-    
+    loggedIn = true;
+
+    // display the date that its currently on,
+    // SIDEBAR DISPLAYS
+    document.getElementById("addForm").style.display = "none";
+    document.getElementById("loginForm").style.display = "none";
+    document.getElementById("registerForm").style.display = "none";
+    document.getElementById("currentDateEvents").style.display = "block";
 }
 
+
 function logoutAjax(event) {
-    const data = {'request' : 'logout'};
-
-
+    const data = { 'request': 'logout' };
     fetch("calGetId.php", {
         method: 'POST',
         body: JSON.stringify(data),
@@ -245,12 +248,18 @@ function logoutAjax(event) {
 
     function requestSuccess() {
         Window.user_id = -1
-
+        loggedIn = false;
+        // HEADER DISPLAYS
         document.getElementById("welcome").innerText = "Welcome";
-
         document.getElementById("login").style.display = "block";
         document.getElementById("register").style.display = "block";
         document.getElementById("logout").style.display = "none";
+
+        // SIDEBAR DISPLAYS
+        document.getElementById("addForm").style.display = "none";
+        document.getElementById("loginForm").style.display = "block";
+        document.getElementById("registerForm").style.display = "none";
+        document.getElementById("currentDateEvents").style.display = "none";
     }
     function requestFailed() {
         alert("error");
@@ -271,7 +280,7 @@ function addEventAjax(event) {
     const date = startDate.split('-');
     const startYear = date[0];
     const startMonth = date[1] - 1;
-    const startDay = date[2]; 
+    const startDay = date[2];
 
     const data = { 'title': eventName, 'day': startDay, 'month': startMonth, 'year': startYear, 'time': startTime, 'description': description, 'user_id': Window.user_id };
 
@@ -300,14 +309,14 @@ function addEventAjax(event) {
 
 // ADD EVENTLISTENER TO EVERY ELEMENT IN GRID, IF IT IS CLICKED EXECUTE FUNCTION
 Window.onload = setEventListeners();
+let previousElement = '14';
+let previousDay = 15;
 
 function setEventListeners() {
 
     let gridArray = document.getElementsByClassName("grid-item");
     let sideBar = document.getElementById("dateTitle");
     let displayCurrentMonth = currentMonth.getDateObject;
-    let previousElement = '14';
-    let previousDay = 15;
 
     for (let i = 0; i < gridArray.length; i++) {
         gridArray[i].addEventListener('click', e => {
@@ -380,21 +389,70 @@ function setEventListeners() {
             previousDay = displayCurrentDay;
             previousElement = currentElement;
 
-            // CONTROL WHAT IS SHOWN ON THE SIDE
-            document.getElementById("addForm").style.display = "none";
-            document.getElementById("loginForm").style.display = "none";
-            document.getElementById("registerForm").style.display = "none";
-            document.getElementById("currentDateEvents").style.display = "block";
-
-            showEvents(displayCurrentYear, displayCurrentMonth, displayCurrentDay);
-
+            if (loggedIn) {
+                // CONTROL WHAT IS SHOWN ON THE SIDE
+                showEvents(displayCurrentMonth, displayCurrentDay, displayCurrentYear);
+            }
+            else {
+                document.getElementById("addForm").style.display = "none";
+                document.getElementById("loginForm").style.display = "block";
+                document.getElementById("registerForm").style.display = "none";
+                document.getElementById("currentDateEvents").style.display = "none";
+            }
         }, false);
     }
 }
 
-function showEvents(year, month, day) {
+Window.onload = displayCurrentDate();
+function displayCurrentDate() {
+    let todayYear = date.getFullYear();
+    let todayMonth = date.getMonth();
+    let todayDay = date.getDate();
+    // console.log(currentElement);
 
-    const data = {'year': year, 'month': month, 'day': day, 'user_id': Window.user_id};
+    let gridArray = document.getElementsByClassName("grid-item");
+
+    for (let i = 0; i < gridArray.length; i++) {
+        if (gridArray[i].textContent == String(todayDay)) {
+            if (!(i <= 14 && todayDay > 20)) {
+                gridArray[i].style.backgroundColor = "#3C6255";
+                gridArray[previousElement].style.backgroundColor = "#61876E";
+                previousElement = i + 1;
+                previousDay = todayDay;
+                break;
+            }
+        }
+    }
+
+    // CONVERT MONTH NUMBER TO STRING
+    date.setMonth(todayMonth);
+    let monthName = date.toLocaleString("en-US", {
+        month: 'long',
+    })
+
+    let sideBar = document.getElementById("dateTitle");
+    sideBar.textContent = monthName + " " + todayDay + ", " + todayYear;
+
+    if (loggedIn) {
+        // CONTROL WHAT IS SHOWN ON THE SIDE
+        showEvents(todayYear, todayMonth, todayDay);
+    }
+    else {
+        document.getElementById("addForm").style.display = "none";
+        document.getElementById("loginForm").style.display = "block";
+        document.getElementById("registerForm").style.display = "none";
+        document.getElementById("currentDateEvents").style.display = "none";
+    }
+}
+
+
+function showEvents(year, month, day) {
+    document.getElementById("addForm").style.display = "none";
+    document.getElementById("loginForm").style.display = "none";
+    document.getElementById("registerForm").style.display = "none";
+    document.getElementById("currentDateEvents").style.display = "block";
+
+    const data = { 'year': year, 'month': month, 'day': day, 'user_id': Window.user_id };
 
     fetch("calGetEvents.php", {
         method: 'POST',
@@ -402,20 +460,27 @@ function showEvents(year, month, day) {
         headers: { 'content-type': 'application/json' }
     })
         .then(response => response.json())
-        .then(data => getSuccess(data))
+        .then(function (data) {
+            console.log('Success:', JSON.stringify(data))
+            getSuccess(data);
+        })
+        // .then(response => console.log('Success:', JSON.stringify(response)))
+        // .then(data => console.log("data: " + data))
+        // .then(data => getSuccess(data))
         .catch(err => console.error(err));
 
     function getSuccess(data) {
+        console.log("hi");
 
-       let i = 0;
-       document.getElementById("dateEvents").innerHTML = "<br>";
+        let i = 0;
+        document.getElementById("dateEvents").innerHTML = "<br>";
 
 
-       while((i + 2) < data.length) {
+        while ((i + 2) < data.length) {
 
             document.getElementById("dateEvents").innerHTML += "<strong>" + data[i] + "</strong>" + " at " + timeConvert(data[i + 1]) + "<br><br>";
 
-            document.getElementById('dateEvents').innerHTML += "<br> <div class='button' id='" + data[i+2] + "'>View</div> <br>";
+            document.getElementById('dateEvents').innerHTML += "<br> <div class='button' id='" + data[i + 2] + "'>View</div> <br>";
 
             // let eventId = data[i+2]; //this is the loop to add the event listeners, but it wasn't working -pl
             // console.log(eventId);
@@ -429,12 +494,12 @@ function showEvents(year, month, day) {
 
             i += 3;
 
-       }
+        }
 
-       if(data.length == 0) {
-        document.getElementById("dateEvents").innerText = "YOU DONT HAVE ANY EVENTS FOR THIS DAY!!";
-        } 
-  
+        if (data.length == 0) {
+            document.getElementById("dateEvents").innerText = "YOU DONT HAVE ANY EVENTS FOR THIS DAY!!";
+        }
+
         document.getElementById("dateEvents").innerHTML += "<div class='button' id='addEventButton'>Add Event</div>";
         document.getElementById("addEventButton").addEventListener('click', displayAddForm, false);
 
@@ -459,12 +524,12 @@ function timeConvert(time) {
     time = time.split(":");
 
     hour = time[0];
-    if(hour > 12) {
+    if (hour > 12) {
         hour = hour - 12;
         pm = true;
     }
 
-    if(pm == true) {
+    if (pm == true) {
         append = "PM";
     }
 
@@ -495,6 +560,7 @@ function displayAddForm() {
 
 //WHEN REGISTER BUTTON HAS BEEN CLICKED
 document.getElementById("register").addEventListener('click', displayRegisterForm, false);
+document.getElementById("registerLink").addEventListener('click', displayRegisterForm, false);
 
 function displayRegisterForm() {
 
