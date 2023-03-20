@@ -13,8 +13,9 @@ $json_obj = json_decode($json_str, true);
 $fetched = false;
 
 //Variables can be accessed as such:
-$title = $json_obj['title'];
-$user_id = $json_obj['user_id'];
+$event_id = $json_obj['event_id'];
+$user_id = $_SESSION['user_id'];
+
 //This is equivalent to what you previously did with $_POST['username'] and $_POST['password']
 
 if($user_id != $_SESSION['user_id']) {
@@ -27,9 +28,9 @@ if($user_id != $_SESSION['user_id']) {
 }
 
 //$stmt = $mysqli->prepare("SELECT json_object('title', title, 'time', time) FROM events WHERE day=? AND month=? AND year=? AND user_id=?");
-$stmt = $mysqli->prepare("SELECT day, month, year, time, description FROM events WHERE title=? AND user_id=? ORDER BY time");
+$stmt = $mysqli->prepare("SELECT title, day, month, year, time, description FROM events WHERE user_id = ? and event_id=? ORDER BY time");
 
-$stmt->bind_param('si', $title, $user_id);
+$stmt->bind_param('ii', $user_id, $event_id);
 if($stmt->execute()) {
     $fetched = true;
 }
@@ -41,10 +42,10 @@ $row = $result->fetch_assoc();
 
 $resultArray = array();
 
-array_push($resultArray,$title);
+// array_push($resultArray,$title);
 
 while($row) {
-    array_push($resultArray, $row['day'], $row['month'], $row['year'], $row['time'], $row['description']);
+    array_push($resultArray, $row['title'], $row['day'], $row['month'], $row['year'], $row['time'], $row['description']);
     $row = $result->fetch_assoc();
 }
 $stmt->close();
@@ -63,4 +64,3 @@ if($fetched == true){
 	));
 	exit;
 }
-?>

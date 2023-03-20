@@ -185,13 +185,12 @@ function setEventListeners() {
 
             // CHANGE THE PREVIOUS DAY NOT IN THE CURRENT MONTH TO LIGHT GREEN
             if (previousDay == currentDayAsInt && previousElement == currentElementId) {
-                document.getElementById(previousElement).style.backgroundColor = "#61876E";
+                document.getElementById(previousElement).style.backgroundColor = "#3C6255";
             }
-            if ((previousElement < 8 && previousDay > 15) || (previousElement > 28 && previousDay < 15)) {
+            else if ((previousElement < 8 && previousDay > 15) || (previousElement > 28 && previousDay < 15)) {
                 console.log("current id: " + currentElementId + "  currentDay: " + currentDayAsInt + "  previ: " + previousElement);
                 document.getElementById(previousElement).style.backgroundColor = "#A6BB8D";
             }
-
             /// CHANGE THE PREVIOUS DAY IN CURRENT MONTH BACK TO GREEN
             else {
                 document.getElementById(previousElement).style.backgroundColor = "#61876E";
@@ -576,8 +575,9 @@ function showEvents(year, month, day) {
 
 
         while ((i + 2) <= data.length) {
+            document.getElementById("dateEvents").innerHTML += "<div class='eventButton' id='" + data[i + 2] + "-EventId'>" + data[i] + " at " + timeConvert(data[i + 1]) + "<br></div>";
 
-            document.getElementById("dateEvents").innerHTML += "<div class='eventButton' id='" + data[i] + "'><strong>" + data[i] + "</strong>" + " at " + timeConvert(data[i + 1]) + "<br></div>";
+            // document.getElementById("dateEvents").innerHTML += "<div class='eventButton' id='" + data[i + 2] + "-EventId'><strong>" + data[i] + "</strong>" + " at " + timeConvert(data[i + 1]) + "<br></div>";
             i += 3;
         }
 
@@ -605,8 +605,10 @@ function viewEventListeners() {
     for (let i = 0; i < viewButtonArray.length; i++) {
         viewButtonArray[i].addEventListener('click', e => {
             let currentElement = e.target.id;
+            const getEventIdArr = currentElement.split("-");
+            currentElement = getEventIdArr[0];
             getSessionId();
-            const data = { 'title': currentElement, 'user_id': user_id };
+            const data = { 'event_id': currentElement };
 
             fetch("calGetEventsName.php", {
                 method: 'POST',
@@ -627,19 +629,19 @@ function viewEventListeners() {
                     console.log("Title: " + data[0]);
                     let i = 0;
 
-                    while ((i + 6) <= data.length) {
+                    while (i < data.length) {
 
                         date.setMonth(data[i + 2]);
                         let monthName = date.toLocaleString("en-US", {
                             month: 'long',
                         })
 
-                        document.getElementById("eventDate").innerHTML = "<b>Date: </b>" + monthName + " " + data[i+1] + ", " + data[i + 3];
+                        document.getElementById("eventDate").innerHTML = "<b>Date: </b>" + monthName + " " + data[i + 1] + ", " + data[i + 3];
 
                         document.getElementById("eventTime").innerHTML = "<b>Time: </b>" + timeConvert(data[i + 4]);
                         document.getElementById("eventDescription").innerHTML = "<b>Description: </b>" + data[i + 5];
 
-                        i += 5;
+                        i += 6;
                     }
 
                 })
