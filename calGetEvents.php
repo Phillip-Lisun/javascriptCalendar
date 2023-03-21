@@ -16,17 +16,17 @@ $fetched = false;
 $year = $json_obj['year'];
 $month = $json_obj['month'];
 $day = $json_obj['day'];
-$user_id = $json_obj['user_id'];
+$user_id = $_SESSION['user_id'];
 //This is equivalent to what you previously did with $_POST['username'] and $_POST['password']
 
-if($user_id != $_SESSION['user_id']) {
-    echo json_encode(array(
-		"success" => false,
-		"message" => "User could not be verified"
-	));
-	exit;
+// if($user_id != $_SESSION['user_id']) {
+//     echo json_encode(array(
+// 		"success" => false,
+// 		"message" => "User could not be verified"
+// 	));
+// 	exit;
 
-}
+// }
 
 //$stmt = $mysqli->prepare("SELECT json_object('title', title, 'time', time) FROM events WHERE day=? AND month=? AND year=? AND user_id=?");
 $stmt = $mysqli->prepare("SELECT title, time, event_id FROM events WHERE day=? AND month=? AND year=? AND user_id=? ORDER BY time");

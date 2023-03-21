@@ -212,3 +212,7 @@ body {
 #editPost{
     display: none;
 }
+
+#editForm {
+    display: none;
+}

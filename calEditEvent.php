@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+
 require "calDatabase.php";
 
 header("Content-Type: application/json"); // Since we are sending a JSON response here (not an HTML document), set the MIME Type to application/json
@@ -13,6 +14,7 @@ $json_obj = json_decode($json_str, true);
 $added = false;
 
 //Variables can be accessed as such:
+$event_id = $json_obj['event_id'];
 $title = $json_obj['title'];
 $day = $json_obj['day'];
 $month = $json_obj['month'];
@@ -22,7 +24,7 @@ $description = $json_obj['description'];
 $user_id = $_SESSION['user_id'];
 //This is equivalent to what you previously did with $_POST['username'] and $_POST['password']
 
-$stmt = $mysqli->prepare("insert into events (title, day, month, year, time, user_id, description) values (?, ?, ?, ?, ?, ?, ?)");
+$stmt = $mysqli->prepare("update events SET title = ?, day = ?, month = ?, year = ?, time = ?, description = ? WHERE event_id = ? AND user_id = ?");
 
 if (!$stmt) {
     $message = printf("Query Prep Failed: %s\n", $mysqli->error);
@@ -34,7 +36,7 @@ if (!$stmt) {
     exit;
 }
 
-$stmt->bind_param('siiisis', $title, $day, $month, $year, $time, $user_id, $description);
+$stmt->bind_param('siiissii', $title, $day, $month, $year, $time, $description, $event_id, $user_id);
 if($stmt->execute()) {
     $added = true;
 }

@@ -95,8 +95,21 @@
                         <label>Start time: </label><br><input type='time' id='startTime' name='startTime'><br><br>
                         <label>Description: </label><br><textarea id='eventDesc' name="description" rows="5" cols="40"
                             placeholder='description'></textarea><br><br>
-                        <input class="button" type='submit' value='Add Event' id='eventSubmit'
-                            name='submitButton'><br><br>
+                        <input class="button" type='submit' value='Add Event' id='eventSubmit' name='submitButton'>
+                        <br><br>
+                    </form>
+                </div>
+
+                <div id="editForm">
+                    <div class="sideBarTitle" id="sideBarAddTitle">Edit Event</div>
+                    <form method='POST'><br>
+                        <label>Event Name: </label><br><input type='text' id='editEventName' name='editEventName'><br><br>
+                        <label>Start Date: </label><br><input type='date' id='editStartDate' name='editStartDate'><br><br>
+                        <label>Start time: </label><br><input type='time' id='editStartTime' name='editStartTime'><br><br>
+                        <label>Description: </label><br><textarea id='editEventDesc' name="editDescription" rows="5" cols="40"
+                            placeholder='description'></textarea><br><br>
+                        <div class="button" id="submitEditPost">Edit Post</div>
+                        <br><br>
                     </form>
                 </div>
 

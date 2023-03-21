@@ -211,6 +211,7 @@ function setEventListeners() {
                 document.getElementById("loginForm").style.display = "block";
                 document.getElementById("registerForm").style.display = "none";
                 document.getElementById("currentDateEvents").style.display = "none";
+                document.getElementById("editForm").style.display = "none";
                 document.getElementById("viewEvent").style.display = "none";
             }
         }, false);
@@ -257,6 +258,7 @@ function displayCurrentDate() {
         document.getElementById("addForm").style.display = "none";
         document.getElementById("loginForm").style.display = "none";
         document.getElementById("registerForm").style.display = "none";
+        document.getElementById("editForm").style.display = "none";
         document.getElementById("currentDateEvents").style.display = "block";
         document.getElementById("viewEvent").style.display = "none";
     }
@@ -301,6 +303,7 @@ function displayLoginForm() {
 
     document.getElementById("addForm").style.display = "none";
     document.getElementById("loginForm").style.display = "block";
+    document.getElementById("editForm").style.display = "none";
     document.getElementById("registerForm").style.display = "none";
     document.getElementById("currentDateEvents").style.display = "none";
     document.getElementById("viewEvent").style.display = "none";
@@ -358,6 +361,7 @@ function loginSuccess(user_id, username) {
     document.getElementById("addForm").style.display = "none";
     document.getElementById("loginForm").style.display = "none";
     document.getElementById("registerForm").style.display = "none";
+    document.getElementById("editForm").style.display = "none";
     document.getElementById("currentDateEvents").style.display = "block";
     document.getElementById("viewEvent").style.display = "none";
 }
@@ -385,6 +389,7 @@ function logoutAjax(event) {
         // SIDEBAR DISPLAYS
         document.getElementById("addForm").style.display = "none";
         document.getElementById("loginForm").style.display = "block";
+        document.getElementById("editForm").style.display = "none";
         document.getElementById("registerForm").style.display = "none";
         document.getElementById("currentDateEvents").style.display = "none";
         document.getElementById("viewEvent").style.display = "none";
@@ -497,6 +502,7 @@ function displayAddForm() {
     if (document.getElementById("addForm").style.display == "none") {
         document.getElementById("addForm").style.display = "block";
         document.getElementById("currentDateEvents").style.display = "none";
+        document.getElementById("editForm").style.display = "none";
         document.getElementById("viewEvent").style.display = "none";
         document.getElementById("eventSubmit").addEventListener("click", addEventAjax, false);
     }
@@ -505,6 +511,7 @@ function displayAddForm() {
     else {
         document.getElementById("addForm").style.display = "none";
         document.getElementById("currentDateEvents").style.display = "block";
+        document.getElementById("editForm").style.display = "none";
         document.getElementById("viewEvent").style.display = "none";
     }
 }
@@ -553,6 +560,7 @@ function showEvents(year, month, day) {
     document.getElementById("loginForm").style.display = "none";
     document.getElementById("registerForm").style.display = "none";
     document.getElementById("currentDateEvents").style.display = "block";
+    document.getElementById("editForm").style.display = "none";
     document.getElementById("viewEvent").style.display = "none";
 
     if(year == "a") {
@@ -634,6 +642,7 @@ function viewEventListeners() {
                     document.getElementById("loginForm").style.display = "none";
                     document.getElementById("registerForm").style.display = "none";
                     document.getElementById("currentDateEvents").style.display = "none";
+                    document.getElementById("editForm").style.display = "none";
                     document.getElementById("viewEvent").style.display = "block";
 
                     sideBar.innerHTML = data[0];
@@ -654,7 +663,7 @@ function viewEventListeners() {
 
                     document.getElementById("eventTime").innerHTML = "<b>Time: </b>" + timeConvert(data[4]);
                     document.getElementById("eventDescription").innerHTML = "<b>Description: </b>" + data[5];
-                    setViewButtonListeners(data[1], data[2], data[3]);
+                    setViewButtonListeners(currentElement, data[0], data[5], data[1], data[2], data[3]);
 
 
                 })
@@ -668,58 +677,119 @@ function viewEventListeners() {
 }
 
 
-function setViewButtonListeners() {
-    document.getElementById("editPostButton").addEventListener('click', editPost, false);
-    document.getElementById("deletePostButton").addEventListener('click', deletePost, false);
+function setViewButtonListeners(event_id, title, description, day, month, year) {
+    let editPostButton = document.getElementById("editPostButton");
+
+    editPostButton.addEventListener('click', editPostForm, false);
+    editPostButton.eventId = event_id;
+    editPostButton.title = title;
+    editPostButton.desc = description;
+
+    let deletePostButton = document.getElementById("deletePostButton");
+
+    deletePostButton.addEventListener('click', deletePost, false);
+    deletePostButton.event_id = event_id;
+    deletePostButton.day = day;
+    deletePostButton.month = month;
+    deletePostButton.year= year;
+
 
     return;
 
 }
 
-function editPost() {
+function editPostForm(event) {
 
-    alert("I am in edit post");
+    event_id = editPostButton.eventId;
+    title = editPostButton.title;
+    description = editPostButton.description;
 
-    // document.getElementById("addForm").style.display = "none";
-    // document.getElementById("loginForm").style.display = "none";
-    // document.getElementById("registerForm").style.display = "none";
-    // document.getElementById("currentDateEvents").style.display = "none";
-    // document.getElementById("viewEvent").style.display = "none";
-    // document.getElementById("viewEvent").style.display = "block";
+    console.log("edit");
 
-    // console.log("Title: " + title);
-    // getSessionId();
-    // const data = { 'title': title, 'user_id': user_id };
+    document.getElementById("addForm").style.display = "none";
+    document.getElementById("loginForm").style.display = "none";
+    document.getElementById("registerForm").style.display = "none";
+    document.getElementById("currentDateEvents").style.display = "none";
+    document.getElementById("viewEvent").style.display = "none";
+    document.getElementById("editForm").style.display = "block";
 
-    // fetch("calGetEventsName.php", {
-    //     method: 'POST',
-    //     body: JSON.stringify(data),
-    //     headers: { 'content-type': 'application/json' }
-    // })
-    //     .then(response => response.json())
-    //     .then(function (data) {
-    //         console.log('Success:', JSON.stringify(data))
+    document.getElementById("editEventName").value = title;
+    document.getElementById("editEventDesc").textContent = description;
 
-    //         let i = 0;
+    document.getElementById("submitEditPost").addEventListener('click', editPostAjax, false);
+    document.getElementById('submitEditPost').event_id = event_id;
 
-    //         while ((i + 5) <= data.length) {
 
-    //             date.setMonth(data[i + 1]);
-    //             let monthName = date.toLocaleString("en-US", {
-    //                 month: 'long',
-    //             })
 
-    //             document.getElementById("eventDate").innerHTML = "<b>Date: </br>" + monthName + " " + data[i] + ", " + data[i + 2];
-    //             document.getElementById("eventTime").innerHTML = "<b>Time: </br>" + timeConvert(data[i + 3]);
-    //             document.getElementById("description").innerHTML = "<b>Description: </br>" + data[i + 4];
-
-    //             i += 4;
-    //         }
-
-    //     })
-    //     .catch(err => console.error(err));
+   
 }
 
-function deletePost() {
-    alert("I am in delete post");
+function editPostAjax(event) {
+
+    event_id = document.getElementById('submitEditPost').event_id;
+
+    const eventName = document.getElementById("editEventName").value;
+    const startDate = document.getElementById("editStartDate").value;
+    const startTime = document.getElementById("editStartTime").value;
+    const description = document.getElementById("editEventDesc").value;
+    console.log("variables set");
+
+    const date = startDate.split('-');
+    const startYear = date[0];
+    const startMonth = date[1] - 1;
+    const startDay = date[2];
+
+    const data = {'event_id': event_id, 'title': eventName, 'day': startDay, 'month': startMonth, 'year': startYear, 'time': startTime, 'description': description};
+
+    fetch("calEditEvent.php", {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: { 'content-type': 'application/json' }
+    })
+        .then(response => response.json())
+        .then(data => data.success ? addSuccess() : addFailed(data.message))
+        .catch(err => console.error(err));
+
+    function addSuccess() {
+        alert("event edited!");
+        showEvents(startYear, startMonth, startDay);
+    }
+    function addFailed(message) {
+        alert(message);
+    }
+
+
+
+
+}
+
+function deletePost(event) {
+    event_id = deletePostButton.event_id;
+    console.log("variables set");
+
+    const data = {'event_id': event_id};
+
+    fetch("calDeleteEvent.php", {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: { 'content-type': 'application/json' }
+    })
+        .then(response => response.json())
+        .then(data => data.success ? addSuccess() : addFailed(data.message))
+        .catch(err => console.error(err));
+
+    function addSuccess() {
+        alert("event deleted!");
+        showEvents(startYear, startMonth, startDay);
+    }
+    function addFailed(message) {
+        alert(message);
+    }
+
+    day = deletePostButton.day;
+    month = deletePostButton.month;
+    year = deletePostButton.year;
+
+    showEvents(year, month, day);
+
 }
