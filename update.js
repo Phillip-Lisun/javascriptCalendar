@@ -6,7 +6,7 @@ function Month(c, b) { this.year = c; this.month = b; this.nextMonth = function 
 
 // Window.onload = document.getElementById("logout").style.display = "none";
 //gets current date & sets 
-const date = new Date();
+let date = new Date();
 let currentMonth = new Month((date.getFullYear()), (date.getMonth())); // October 2017
 Window.onload = updateCalendar();
 
@@ -172,12 +172,12 @@ function setEventListeners() {
 
             // CONVERT MONTH NUMBER TO STRING
             date.setMonth(displayCurrentMonth);
-            let monthName = date.toLocaleString("en-US", {
+            let monthNameSideBar = date.toLocaleString("en-US", {
                 month: 'long',
             })
 
 
-            sideBar.textContent = monthName + " " + displayCurrentDay + ", " + displayCurrentYear;
+            sideBar.textContent = monthNameSideBar + " " + displayCurrentDay + ", " + displayCurrentYear;
 
             // CONTROL THE COLOR OF THE GRID BLOCK
             document.getElementById(currentElement).style.backgroundColor = "#3C6255";
@@ -204,6 +204,7 @@ function setEventListeners() {
             if (user_id != -1) {
                 // CONTROL WHAT IS SHOWN ON THE SIDE
                 showEvents(displayCurrentYear, displayCurrentMonth, displayCurrentDay);
+
             }
             else {
                 document.getElementById("addForm").style.display = "none";
@@ -239,12 +240,12 @@ function displayCurrentDate() {
 
     // CONVERT MONTH NUMBER TO STRING
     date.setMonth(todayMonth);
-    let monthName = date.toLocaleString("en-US", {
+    let monthNameCurrentDate = date.toLocaleString("en-US", {
         month: 'long',
     })
 
     let sideBar = document.getElementById("dateTitle");
-    sideBar.textContent = monthName + " " + todayDay + ", " + todayYear;
+    sideBar.textContent = monthNameCurrentDate + " " + todayDay + ", " + todayYear;
 
     getSessionId();
 
@@ -554,6 +555,12 @@ function showEvents(year, month, day) {
     document.getElementById("currentDateEvents").style.display = "block";
     document.getElementById("viewEvent").style.display = "none";
 
+    if(year == "a") {
+        year = date.getFullYear;
+        month = date.getMonth;
+        day = date.getDay;
+    }
+
     const data = { 'year': year, 'month': month, 'day': day, 'user_id': user_id };
 
     fetch("calGetEvents.php", {
@@ -588,6 +595,7 @@ function showEvents(year, month, day) {
         // document.getElementById("dateEvents").innerHTML += "<div class='button' id='addEventButton'>Add Event</div>";
         document.getElementById("addEventButton").addEventListener('click', displayAddForm, false);
 
+
         viewEventListeners();
     }
     function getFailed(message) {
@@ -600,14 +608,18 @@ function viewEventListeners() {
 
     let viewButtonArray = document.getElementsByClassName("eventButton");
     let sideBar = document.getElementById("viewTitle");
-    let displayCurrentMonth = currentMonth.getDateObject;
-
+    //let displayCurrentMonth = currentMonth.getDateObject;
+    
     for (let i = 0; i < viewButtonArray.length; i++) {
+
+
         viewButtonArray[i].addEventListener('click', e => {
+    
+
             let currentElement = e.target.id;
             const getEventIdArr = currentElement.split("-");
             currentElement = getEventIdArr[0];
-            getSessionId();
+            //getSessionId();
             const data = { 'event_id': currentElement };
 
             fetch("calGetEventsName.php", {
@@ -627,72 +639,87 @@ function viewEventListeners() {
                     sideBar.innerHTML = data[0];
 
                     console.log("Title: " + data[0]);
-                    let i = 0;
 
-                    while (i < data.length) {
+                    let monthNum = parseInt(data[2]);
+                    console.log("Month Num: " + monthNum);
 
-                        date.setMonth(data[i + 2]);
-                        let monthName = date.toLocaleString("en-US", {
-                            month: 'long',
-                        })
+                    date.setMonth(monthNum);
+                    let viewEventMonthName = date.toLocaleString("en-US", {
+                        month: 'long',
+                    })
 
-                        document.getElementById("eventDate").innerHTML = "<b>Date: </b>" + monthName + " " + data[i + 1] + ", " + data[i + 3];
+                    // let viewEventMonthName = "March";
 
-                        document.getElementById("eventTime").innerHTML = "<b>Time: </b>" + timeConvert(data[i + 4]);
-                        document.getElementById("eventDescription").innerHTML = "<b>Description: </b>" + data[i + 5];
+                    document.getElementById("eventDate").innerHTML = "<b>Date: </b>" + viewEventMonthName + " " + data[1] + ", " + data[3];
 
-                        i += 6;
-                    }
+                    document.getElementById("eventTime").innerHTML = "<b>Time: </b>" + timeConvert(data[4]);
+                    document.getElementById("eventDescription").innerHTML = "<b>Description: </b>" + data[5];
+                    setViewButtonListeners(data[1], data[2], data[3]);
+
 
                 })
                 .catch(err => console.error(err));
 
-            // document.getElementById("backToEventList").addEventListener('click', editPost, false);
-
-            // document.getElementById("editPostButton").addEventListener('click', editPost(currentElement), false);
-            // document.getElementById("deletePostButton").addEventListener('click', deletePost, false);
         }, false);
+
     }
+    return;
+
 }
 
-function editPost(title) {
 
-    document.getElementById("addForm").style.display = "none";
-    document.getElementById("loginForm").style.display = "none";
-    document.getElementById("registerForm").style.display = "none";
-    document.getElementById("currentDateEvents").style.display = "none";
-    document.getElementById("viewEvent").style.display = "none";
-    document.getElementById("viewEvent").style.display = "block";
+function setViewButtonListeners() {
+    document.getElementById("editPostButton").addEventListener('click', editPost, false);
+    document.getElementById("deletePostButton").addEventListener('click', deletePost, false);
 
-    console.log("Title: " + title);
-    getSessionId();
-    const data = { 'title': title, 'user_id': user_id };
+    return;
 
-    fetch("calGetEventsName.php", {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: { 'content-type': 'application/json' }
-    })
-        .then(response => response.json())
-        .then(function (data) {
-            console.log('Success:', JSON.stringify(data))
+}
 
-            let i = 0;
+function editPost() {
 
-            while ((i + 5) <= data.length) {
+    alert("I am in edit post");
 
-                date.setMonth(data[i + 1]);
-                let monthName = date.toLocaleString("en-US", {
-                    month: 'long',
-                })
+    // document.getElementById("addForm").style.display = "none";
+    // document.getElementById("loginForm").style.display = "none";
+    // document.getElementById("registerForm").style.display = "none";
+    // document.getElementById("currentDateEvents").style.display = "none";
+    // document.getElementById("viewEvent").style.display = "none";
+    // document.getElementById("viewEvent").style.display = "block";
 
-                document.getElementById("eventDate").innerHTML = "<b>Date: </br>" + monthName + " " + data[i] + ", " + data[i + 2];
-                document.getElementById("eventTime").innerHTML = "<b>Time: </br>" + timeConvert(data[i + 3]);
-                document.getElementById("description").innerHTML = "<b>Description: </br>" + data[i + 4];
+    // console.log("Title: " + title);
+    // getSessionId();
+    // const data = { 'title': title, 'user_id': user_id };
 
-                i += 4;
-            }
+    // fetch("calGetEventsName.php", {
+    //     method: 'POST',
+    //     body: JSON.stringify(data),
+    //     headers: { 'content-type': 'application/json' }
+    // })
+    //     .then(response => response.json())
+    //     .then(function (data) {
+    //         console.log('Success:', JSON.stringify(data))
 
-        })
-        .catch(err => console.error(err));
+    //         let i = 0;
+
+    //         while ((i + 5) <= data.length) {
+
+    //             date.setMonth(data[i + 1]);
+    //             let monthName = date.toLocaleString("en-US", {
+    //                 month: 'long',
+    //             })
+
+    //             document.getElementById("eventDate").innerHTML = "<b>Date: </br>" + monthName + " " + data[i] + ", " + data[i + 2];
+    //             document.getElementById("eventTime").innerHTML = "<b>Time: </br>" + timeConvert(data[i + 3]);
+    //             document.getElementById("description").innerHTML = "<b>Description: </br>" + data[i + 4];
+
+    //             i += 4;
+    //         }
+
+    //     })
+    //     .catch(err => console.error(err));
+}
+
+function deletePost() {
+    alert("I am in delete post");
 }
