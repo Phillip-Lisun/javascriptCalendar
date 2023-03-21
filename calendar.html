@@ -88,7 +88,7 @@
             <div class="contentInSideBar">
 
                 <div id="addForm">
-                    <div class="sideBarTitle" id="sideBarAddTitle">Add an Event</div>
+                    <div class="sideBarTitle" id="sideBarAddTitle">Add an Event</div><hr>
                     <form method='POST'><br>
                         <label>Event Name: </label><br><input type='text' id='eventName' name='eventName'><br><br>
                         <label>Start Date: </label><br><input type='date' id='startDate' name='startDate'><br><br>
@@ -96,12 +96,12 @@
                         <label>Description: </label><br><textarea id='eventDesc' name="description" rows="5" cols="40"
                             placeholder='description'></textarea><br><br>
                         <input class="button" type='submit' value='Add Event' id='eventSubmit' name='submitButton'>
-                        <br><br>
+                        <br><hr>
                     </form>
                 </div>
 
                 <div id="editForm">
-                    <div class="sideBarTitle" id="sideBarAddTitle">Edit Event</div>
+                    <div class="sideBarTitle" id="sideBarAddTitle">Edit Event</div><hr>
                     <form method='POST'><br>
                         <label>Event Name: </label><br><input type='text' id='editEventName' name='editEventName'><br><br>
                         <label>Start Date: </label><br><input type='date' id='editStartDate' name='editStartDate'><br><br>
@@ -109,22 +109,21 @@
                         <label>Description: </label><br><textarea id='editEventDesc' name="editDescription" rows="5" cols="40"
                             placeholder='description'></textarea><br><br>
                         <div class="button" id="submitEditPost">Edit Post</div>
-                        <br><br>
+                        <br><hr>
                     </form>
                 </div>
 
                 <div id="currentDateEvents">
                     <div class="sideBarTitle" id="dateTitle"></div>
-
+                    <hr>
                     <div id="dateEvents"><br>
                     </div>
-                    <br><br>
-
+                    <br><hr>
                     <div class="button" id="addEventButton">Add Event</div>
                 </div>
 
                 <div id="registerForm">
-                    <div class="sideBarTitle" id="registerTitle">Register</div>
+                    <div class="sideBarTitle" id="registerTitle">Register</div><hr>
                     <form method='POST'><br>
                         <label>First Name: </label><br><input type='text' id='first_name' name='first_name'><br><br>
                         <label>Last Name: </label><br><input type='text' id='last_name' name='last_name'><br><br>
@@ -135,30 +134,30 @@
                             name='checkpwd'><br><br>
                         <input class='button' type='submit' value='Register' name='submit' id='registerSubmit'><br><br>
                     </form>
+                    <br><hr>
                     <div id="loginLink"><u>Click here already have an account!</u></div>
                 </div>
 
                 <div id="loginForm">
-                    <div class="sideBarTitle" id="loginTitle">Login</div>
+                    <div class="sideBarTitle" id="loginTitle">Login</div><hr>
                     <form method="POST"><br>
                         <label><b>Username: </b><input type="text" id="loginUsername"></label><br><br>
                         <label><b>Password: </b><input type="text" id="loginPassword"></label><br><br>
                         <input class="button" type="submit" value="Login" id="loginSubmit"><br>
                     </form>
-                    <br><br>
+                    <br><hr>
                     <div id="registerLink"><u>Click here if you don't have an account!</u></div>
                 </div>
 
                 <div id="viewEvent">
-                    <div class="sideBarTitle" id="viewTitle"></div>
-                    <div></div>
-                    <br><br>
+                    <div class="sideBarTitle" id="viewTitle"></div><hr>
+                    <br>
                     <div class="viewEventBody">
                         <div id="eventDate"></div>
                         <div id="eventTime"></div>
                         <div id="eventDescription"></div>
                     </div>
-                    <br><br>
+                    <br><hr>
 
                     <div class="button" id="editPostButton">Edit this Post</div>
                     <div class="button" id="deletePostButton">Delete this Post</div>

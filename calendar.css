@@ -180,7 +180,7 @@ body {
 }
 
 .sideBarTitle {
-    text-decoration: underline;
+    /* text-decoration: underline; */
     font-weight: bold;
     font-size: 30px;
 }
@@ -215,4 +215,8 @@ body {
 
 #editForm {
     display: none;
+}
+
+hr{
+    color: #3C6255;
 }
