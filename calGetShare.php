@@ -12,19 +12,14 @@ $json_obj = json_decode($json_str, true);
 
 $fetched = false;
 
+$month = $json_obj['month'];
+$day = $json_obj['day'];
+$year = $json_obj['year'];
+$user_id = $_SESSION['user_id'];
+
 //Variables can be accessed as such:
 
 $user_id = $_SESSION['user_id'];
-//This is equivalent to what you previously did with $_POST['username'] and $_POST['password']
-
-// if($user_id != $_SESSION['user_id']) {
-//     echo json_encode(array(
-// 		"success" => false,
-// 		"message" => "User could not be verified"
-// 	));
-// 	exit;
-
-// }
 
 //$stmt = $mysqli->prepare("SELECT json_object('title', title, 'time', time) FROM events WHERE day=? AND month=? AND year=? AND user_id=?");
 $stmt = $mysqli->prepare("SELECT event_id from share ORDER BY time");
@@ -59,9 +54,9 @@ if($fetched == false){
 }
 
 
-$stmt = $mysqli->prepare("SELECT title, time, event_id FROM events WHERE event_id=? ORDER BY time");
+$stmt = $mysqli->prepare("SELECT title, time, event_id FROM events WHERE event_id=? and month=? and year=? and day=? ORDER BY time");
 
-$stmt->bind_param('i', $event_id);
+$stmt->bind_param('iiii', $event_id, $month, $year, $day);
 if($stmt->execute()) {
     $fetched = true;
 }
@@ -75,7 +70,7 @@ $resultArray = array();
 
 while($row) {
 
-    array_push($resultArray, $row['title'], $row['time'], $row['event_id']);
+    array_push($resultArray, $row['title'], $row['time'], $row['event_id'], $row['month'], $row['day'], $row['year']);
    
     $row = $result->fetch_assoc();
 

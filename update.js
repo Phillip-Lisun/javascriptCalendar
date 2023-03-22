@@ -36,7 +36,7 @@ function getSessionId() {
             loginSuccess(user_id, username);
             displayCurrentDate();
         }
-        
+
     }
     function requestFailed(error) {
         console.log(error);
@@ -141,7 +141,7 @@ function updateCalendar() {
 
     addDots();
     addStars();
-    
+
 }
 
 
@@ -149,46 +149,46 @@ let daysWithEvents = [];
 
 
 async function addDots() {
-        await new Promise(resolve => setTimeout(resolve, 500)); // 3 sec
+    await new Promise(resolve => setTimeout(resolve, 500)); // 3 sec
 
 
-        getSessionId();
-        //alert("Hello!");
+    getSessionId();
+    //alert("Hello!");
 
-        
 
-        // if (user_id != -1) {
 
-        let divs = document.getElementsByClassName("grid-item");  
-        let i = 0;  
+    // if (user_id != -1) {
 
-        while(i < 42) {
+    let divs = document.getElementsByClassName("grid-item");
+    let i = 0;
 
-            let day = divs[i].textContent;
+    while (i < 42) {
 
-            const data = { 'day': day, 'month': currentMonth.month, 'year': currentMonth.year, 'user_id': user_id };
+        let day = divs[i].textContent;
 
-            fetch("calCheckEvents.php", {
-                method: 'POST',
-                body: JSON.stringify(data),
-                headers: { 'content-type': 'application/json' }
-            })
-                .then(response => response.json())
-                .then(data => data.success ? addDot():noDot())
-                .catch(err => alert(err));
+        const data = { 'day': day, 'month': currentMonth.month, 'year': currentMonth.year, 'user_id': user_id };
 
-            function addDot() {
-                //alert("There is an event");
-                if(!daysWithEvents.includes(day)) {
-                    daysWithEvents.push(day);
-                }
+        fetch("calCheckEvents.php", {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: { 'content-type': 'application/json' }
+        })
+            .then(response => response.json())
+            .then(data => data.success ? addDot() : noDot())
+            .catch(err => alert(err));
+
+        function addDot() {
+            //alert("There is an event");
+            if (!daysWithEvents.includes(day)) {
+                daysWithEvents.push(day);
             }
-
-            function noDot() {
-                console.log("No Events");                   
-            }   
-            i++;
         }
+
+        function noDot() {
+            console.log("No Events");
+        }
+        i++;
+    }
 
 }
 
@@ -203,35 +203,35 @@ async function addStars() {
     let startIndex = 0;
     let endIndex = 42;
 
-    let divs = document.getElementsByClassName("grid-item");  
+    let divs = document.getElementsByClassName("grid-item");
 
     let monthIndicator = 0;
     let j = 0;
 
-    while(j < 42) {
+    while (j < 42) {
 
         let day = divs[j].textContent;
 
-        if(day == 1 && monthIndicator == 0) {
+        if (day == 1 && monthIndicator == 0) {
             startIndex = j;
             monthIndicator++;
         }
-        else if(day == 1 && monthIndicator == 1) {
+        else if (day == 1 && monthIndicator == 1) {
             endIndex = j;
         }
 
 
         j++;
     }
-  
 
-    while(i < daysWithEvents.length) {
 
-        while(startIndex < endIndex) {
+    while (i < daysWithEvents.length) {
+
+        while (startIndex < endIndex) {
 
             let day = divs[startIndex].textContent;
 
-            if(day == daysWithEvents[i]) {
+            if (day == daysWithEvents[i]) {
                 divs[startIndex].textContent += "*";
                 i++;
             }
@@ -744,7 +744,7 @@ function showEvents(year, month, day) {
         // document.getElementById("dateEvents").innerHTML += "<div class='button' id='addEventButton'>Add Event</div>";
         document.getElementById("addEventButton").addEventListener('click', displayAddForm, false);
 
-
+        showShareEvents(year, month, day);
         viewEventListeners();
     }
     function getFailed(message) {
@@ -921,7 +921,7 @@ function sharePostAjax(event) {
     function shareSuccess() {
         alert("event shared!");
 
-        showShareEvents(startYear, startMonth, startDay);
+        // showShareEvents();
     }
     function shareFailed(message) {
         alert(message);
@@ -929,44 +929,47 @@ function sharePostAjax(event) {
 
 }
 
-fetch("calGetEvents.php", {
-    method: 'POST',
-    body: JSON.stringify(data),
-    headers: { 'content-type': 'application/json' }
-})
-    .then(response => response.json())
-    .then(function (data) {
-        console.log('Success:', JSON.stringify(data))
-        getSuccess(data);
+
+function showShareEvents(year, month, day){
+
+    const data = { 'year': year, 'month': month, 'day': day, 'user_id': user_id };
+    
+
+    fetch("calGetShare.php", {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: { 'content-type': 'application/json' }
     })
-    .catch(err => console.error(err));
+        .then(response => response.json())
+        .then(function (data) {
+            console.log('Success:', JSON.stringify(data))
+            getShareSuccess(data);
+        })
+        .catch(err => console.error(err));
 
-function getSuccess(data) {
+    function getShareSuccess(data) {
+        let i = 0;
+        document.getElementById("shareDate").innerHTML = "<br>";
 
-    let i = 0;
-    document.getElementById("dateEvents").innerHTML = "<br>";
+        
+        while ((i + 5) <= data.length) {
+            if(data[i+3] == month && data[i+4] == day && data[i+5] == year){
+                document.getElementById("shareDate").innerHTML += "<div class='eventButton' id='" + data[i + 2] + "-EventId'>" + data[i] + " at " + timeConvert(data[i + 1]) + "<br></div>";
+                i += 6;
+            }
 
+        }
 
-    while ((i + 2) <= data.length) {
-        document.getElementById("dateEvents").innerHTML += "<div class='eventButton' id='" + data[i + 2] + "-EventId'>" + data[i] + " at " + timeConvert(data[i + 1]) + "<br></div>";
+        if (data.length == 0) {
+            document.getElementById("shareDate").innerText += "YOU DONT HAVE SHARED EVENTS!!";
+        }
 
-        // document.getElementById("dateEvents").innerHTML += "<div class='eventButton' id='" + data[i + 2] + "-EventId'><strong>" + data[i] + "</strong>" + " at " + timeConvert(data[i + 1]) + "<br></div>";
-        i += 3;
     }
-
-    if (data.length == 0) {
-        document.getElementById("dateEvents").innerText += "YOU DONT HAVE ANY EVENTS FOR THIS DAY!!";
+    function getFailed(message) {
+        alert(message);
     }
-
-    // document.getElementById("dateEvents").innerHTML += "<div class='button' id='addEventButton'>Add Event</div>";
-    document.getElementById("addEventButton").addEventListener('click', displayAddForm, false);
-
-
-    viewEventListeners();
 }
-function getFailed(message) {
-    alert(message);
-}
+
 
 function deletePost(event) {
     event_id = deletePostButton.event_id;
