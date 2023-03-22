@@ -5,6 +5,7 @@ function Month(c, b) { this.year = c; this.month = b; this.nextMonth = function 
 
 let user_id = -1;
 let username = "";
+let token = "";
 
 // Window.onload = document.getElementById("logout").style.display = "none";
 //gets current date & sets 
@@ -21,12 +22,14 @@ function getSessionId() {
         headers: { 'content-type': 'application/json' }
     })
         .then(response => response.json())
-        .then(data => data.success ? requestSuccess(data.user_id, data.username) : requestFailed(data.message))
+        .then(data => data.success ? requestSuccess(data.user_id, data.username, data.token) : requestFailed(data.message))
         .catch(err => console.error(err));
 
-    function requestSuccess(curr_user_id, curr_username) {
+    function requestSuccess(curr_user_id, curr_username, tokenPull) {
         user_id = curr_user_id;
         username = curr_username;
+        token = tokenPull;
+
         console.log(username);
         console.log(user_id);
         if (windowLoadVarNum == 0) {
@@ -190,7 +193,7 @@ async function addDots() {
 }
 
 async function addStars() {
-    await new Promise(resolve => setTimeout(resolve, 1500)); // 5 sec
+    await new Promise(resolve => setTimeout(resolve, 2000)); // 5 sec
     //alert("I am in add stars");
     //daysWithEvents.sort();
 
@@ -467,17 +470,19 @@ function loginAjax(event) {
         headers: { 'content-type': 'application/json' }
     })
         .then(response => response.json())
-        .then(data => data.success ? loginSuccess(data.user_id, username) : loginFailed(data.message))
+        .then(data => data.success ? loginSuccess(data.user_id, username, data.token) : loginFailed(data.message))
         .catch(err => console.error(err));
 
     function loginFailed(error) {
         alert(error);
     }
 
+    addDots();
+    addStars();
     event.preventDefault();
 }
 
-function loginSuccess(user_id, username) {
+function loginSuccess(user_id, username, tokenPull) {
     // UPDATE HEADER
     document.getElementById("welcome").innerText = "Hello, " + username;
     // document.getElementById("login").style.display = "none";
@@ -487,6 +492,7 @@ function loginSuccess(user_id, username) {
     document.getElementById("logout").addEventListener('click', logoutAjax, false);
     user_id = user_id;
     username = username;
+    token = tokenPull;
 
     // display the date that its currently on,
     // SIDEBAR DISPLAYS
@@ -529,7 +535,8 @@ function logoutAjax(event) {
     function requestFailed() {
         alert("error");
     }
-
+    addDots();
+    addStars();
     event.preventDefault();
 }
 
@@ -664,7 +671,7 @@ function addEventAjax(event) {
     const startMonth = date[1] - 1;
     const startDay = date[2];
 
-    const data = { 'title': eventName, 'day': startDay, 'month': startMonth, 'year': startYear, 'time': startTime, 'description': description, 'user_id': user_id };
+    const data = { 'title': eventName, 'day': startDay, 'month': startMonth, 'year': startYear, 'time': startTime, 'description': description, 'user_id': user_id, 'token': token };
 
     fetch("calAddEvent.php", {
         method: 'POST',
@@ -678,11 +685,13 @@ function addEventAjax(event) {
     function addSuccess() {
         alert("event added!");
         showEvents(startYear, startMonth, startDay);
+        addDots();
+        addStars();
+
     }
     function addFailed(message) {
         alert(message);
     }
-
 
     event.preventDefault();
 }
@@ -870,7 +879,7 @@ function editPostAjax(event) {
     const startMonth = date[1] - 1;
     const startDay = date[2];
 
-    const data = { 'event_id': event_id, 'title': eventName, 'day': startDay, 'month': startMonth, 'year': startYear, 'time': startTime, 'description': description };
+    const data = { 'event_id': event_id, 'title': eventName, 'day': startDay, 'month': startMonth, 'year': startYear, 'time': startTime, 'description': description, 'token': token};
 
     fetch("calEditEvent.php", {
         method: 'POST',
@@ -963,7 +972,7 @@ function deletePost(event) {
     event_id = deletePostButton.event_id;
     console.log("variables set");
 
-    const data = { 'event_id': event_id };
+    const data = { 'event_id': event_id, 'token': token };
 
     fetch("calDeleteEvent.php", {
         method: 'POST',
@@ -987,6 +996,10 @@ function deletePost(event) {
     year = deletePostButton.year;
 
     showEvents(year, month, day);
+
+    addDots();
+    addStars();
+
 
 }
 

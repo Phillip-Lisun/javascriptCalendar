@@ -47,7 +47,7 @@ $resultArray = array();
 // array_push($resultArray,$title);
 
 while($row) {
-    array_push($resultArray, $row['title'], $row['day'], $row['month'], $row['year'], $row['time'], $row['description']);
+    array_push($resultArray, htmlentities($row['title']), $row['day'], $row['month'], $row['year'], $row['time'], htmlentities($row['description']));
     $row = $result->fetch_assoc();
 }
 $stmt->close();

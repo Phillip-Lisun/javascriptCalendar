@@ -17,7 +17,11 @@ $added = false;
 //Variables can be accessed as such:
 $event_id = $json_obj['event_id'];
 $user_id = $_SESSION['user_id'];
+$tokenRecieve = $json_obj['token'];
 //This is equivalent to what you previously did with $_POST['username'] and $_POST['password']
+if(!hash_equals($_SESSION['token'], $tokenRecieve)){
+	die("Request forgery detected");
+}
 
 $stmt = $mysqli->prepare("delete from events WHERE event_id = ? AND user_id = ?");
 

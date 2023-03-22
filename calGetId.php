@@ -17,7 +17,7 @@
             echo json_encode(array(
                 "success" => true,
                 "user_id" => $_SESSION['user_id'],
-                'username' => $_SESSION['username'],
+                'username' => htmlentities($_SESSION['username']),
                 'token' => $_SESSION['token']
             ));
             exit;

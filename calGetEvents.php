@@ -47,7 +47,7 @@ $resultArray = array();
 
 while($row) {
 
-    array_push($resultArray, $row['title'], $row['time'], $row['event_id']);
+    array_push($resultArray, htmlentities($row['title']), $row['time'], $row['event_id']);
    
     $row = $result->fetch_assoc();
 
