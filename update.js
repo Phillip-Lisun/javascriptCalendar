@@ -792,11 +792,9 @@ function viewEventListeners() {
                     // let viewEventMonthName = "March";
 
                     document.getElementById("eventDate").innerHTML = "<b>Date: </b>" + viewEventMonthName + " " + data[1] + ", " + data[3];
-
                     document.getElementById("eventTime").innerHTML = "<b>Time: </b>" + timeConvert(data[4]);
                     document.getElementById("eventDescription").innerHTML = "<b>Description: </b>" + data[5];
                     setViewButtonListeners(currentElement, data[0], data[5], data[1], data[2], data[3]);
-
 
                 })
                 .catch(err => console.error(err));
@@ -811,9 +809,10 @@ function viewEventListeners() {
 
 function setViewButtonListeners(event_id, title, description, day, month, year) {
     let editPostButton = document.getElementById("editPostButton");
-    let sharePostButton = document.getElementById("sharetPostButton");
+    let sharePostButton = document.getElementById("sharePostButton");
 
-    sharePostButton.addEventListener('click', sharePostForm, false);
+    sharePostButton.addEventListener('click', sharePostAjax, false);
+    sharePostButton.eventId = event_id;
 
     editPostButton.addEventListener('click', editPostForm, false);
     editPostButton.eventId = event_id;
@@ -892,62 +891,33 @@ function editPostAjax(event) {
 }
 
 
-function sharePostForm(event) {
-
-    event_id = editPostButton.eventId;
-    title = editPostButton.title;
-    description = editPostButton.description;
-
-    console.log("edit");
-
-    document.getElementById("addForm").style.display = "none";
-    document.getElementById("loginForm").style.display = "none";
-    document.getElementById("registerForm").style.display = "none";
-    document.getElementById("currentDateEvents").style.display = "none";
-    document.getElementById("viewEvent").style.display = "none";
-    document.getElementById("editForm").style.display = "block";
-
-    document.getElementById("editEventName").value = title;
-    document.getElementById("editEventDesc").textContent = description;
-
-    document.getElementById("submitEditPost").addEventListener('click', editPostAjax, false);
-    document.getElementById('submitEditPost').event_id = event_id;
-
-}
-
 function sharePostAjax(event) {
 
-    event_id = document.getElementById('submitEditPost').event_id;
+    const shared_id = document.getElementById("shareWithUsername").value;
+    event_id = editPostButton.eventId;
 
-    const eventName = document.getElementById("editEventName").value;
-    const startDate = document.getElementById("editStartDate").value;
-    const startTime = document.getElementById("editStartTime").value;
-    const description = document.getElementById("editEventDesc").value;
     console.log("variables set");
 
-    const date = startDate.split('-');
-    const startYear = date[0];
-    const startMonth = date[1] - 1;
-    const startDay = date[2];
+    const data = { 'event_id': event_id, 'shared_id': shared_id };
 
-    const data = { 'event_id': event_id, 'title': eventName, 'day': startDay, 'month': startMonth, 'year': startYear, 'time': startTime, 'description': description };
-
-    fetch("calEditEvent.php", {
+    fetch("calShareEvent.php", {
         method: 'POST',
         body: JSON.stringify(data),
         headers: { 'content-type': 'application/json' }
     })
         .then(response => response.json())
-        .then(data => data.success ? addSuccess() : addFailed(data.message))
+        .then(data => data.success ? shareSuccess() : shareFailed(data.message))
         .catch(err => console.error(err));
 
-    function addSuccess() {
-        alert("event edited!");
+    function shareSuccess() {
+        alert("event shared!");
+
         showEvents(startYear, startMonth, startDay);
     }
-    function addFailed(message) {
+    function shareFailed(message) {
         alert(message);
     }
+
 }
 
 function deletePost(event) {
