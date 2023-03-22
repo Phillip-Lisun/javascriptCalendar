@@ -3,15 +3,18 @@
 function Week(c) { this.sunday = c.getSunday(); this.nextWeek = function () { return new Week(this.sunday.deltaDays(7)) }; this.prevWeek = function () { return new Week(this.sunday.deltaDays(-7)) }; this.contains = function (b) { return this.sunday.valueOf() === b.getSunday().valueOf() }; this.getDates = function () { for (var b = [], a = 0; 7 > a; a++)b.push(this.sunday.deltaDays(a)); return b } }
 function Month(c, b) { this.year = c; this.month = b; this.nextMonth = function () { return new Month(c + Math.floor((b + 1) / 12), (b + 1) % 12) }; this.prevMonth = function () { return new Month(c + Math.floor((b - 1) / 12), (b + 11) % 12) }; this.getDateObject = function (a) { return new Date(this.year, this.month, a) }; this.getWeeks = function () { var a = this.getDateObject(1), b = this.nextMonth().getDateObject(0), c = [], a = new Week(a); for (c.push(a); !a.contains(b);)a = a.nextWeek(), c.push(a); return c } };
 
+//page variables
 let user_id = -1;
 let username = "";
 let token = "";
 
-// Window.onload = document.getElementById("logout").style.display = "none";
-//gets current date & sets 
+
 let date = new Date();
 let currentMonth = new Month((date.getFullYear()), (date.getMonth())); // October 2017
-// Window.onload = updateCalendar();
+
+
+
+//checks if a user is already logged in
 Window.onload = getSessionId();
 function getSessionId() {
     const data = { 'request': 'userID' };
@@ -147,7 +150,7 @@ function updateCalendar() {
 
 let daysWithEvents = [];
 
-
+//gets all the days that have events
 async function addDots() {
     await new Promise(resolve => setTimeout(resolve, 500)); // 3 sec
 
@@ -175,7 +178,7 @@ async function addDots() {
         })
             .then(response => response.json())
             .then(data => data.success ? addDot() : noDot())
-            .catch(err => alert(err));
+            .catch(err => console.error(err));
 
         function addDot() {
             //alert("There is an event");
@@ -192,6 +195,7 @@ async function addDots() {
 
 }
 
+//puts stars on all the days with events
 async function addStars() {
     await new Promise(resolve => setTimeout(resolve, 2000)); // 5 sec
     //alert("I am in add stars");
@@ -242,6 +246,8 @@ async function addStars() {
     }
 }
 
+
+//converts 24 hour to 12 hour time
 function timeConvert(time) {
     pm = false;
     append = "AM";
@@ -368,7 +374,7 @@ function setEventListeners() {
     }
 }
 
-
+//displays the current date. Changes the current grid color & sidebar.
 //Window.onload = displayCurrentDate();
 function displayCurrentDate() {
     let todayYear = date.getFullYear();
@@ -432,7 +438,6 @@ function windowLoadVar() {
 // LOGIN STUFF
 //WHEN LOGIN BUTTON HAS BEEN CLICKED
 // document.getElementById("login").addEventListener('click', displayLoginForm, false);
-
 Window.onload = displayLoginForm();
 function displayLoginForm() {
 
@@ -458,11 +463,11 @@ function displayLoginForm() {
 
 //login functionality 
 function loginAjax(event) {
-    const username = document.getElementById("loginUsername").value; // Get the username from the form
+    const usernameSend = document.getElementById("loginUsername").value; // Get the username from the form
     const password = document.getElementById("loginPassword").value; // Get the password from the form
 
     // Make a URL-encoded string for passing POST data:
-    const data = { 'loginUsername': username, 'loginPassword': password };
+    const data = { 'loginUsername': usernameSend, 'loginPassword': password };
 
     fetch("calLogin.php", {
         method: 'POST',
@@ -470,7 +475,7 @@ function loginAjax(event) {
         headers: { 'content-type': 'application/json' }
     })
         .then(response => response.json())
-        .then(data => data.success ? loginSuccess(data.user_id, username, data.token) : loginFailed(data.message))
+        .then(data => data.success ? loginSuccess(data.user_id, usernameSend, data.token) : loginFailed(data.message))
         .catch(err => console.error(err));
 
     function loginFailed(error) {
@@ -482,16 +487,16 @@ function loginAjax(event) {
     event.preventDefault();
 }
 
-function loginSuccess(user_id, username, tokenPull) {
+function loginSuccess(user_idPull, usernamePull, tokenPull) {
     // UPDATE HEADER
-    document.getElementById("welcome").innerText = "Hello, " + username;
+    document.getElementById("welcome").innerText = "Hello, " + usernamePull;
     // document.getElementById("login").style.display = "none";
     // document.getElementById("register").style.display = "none";
     document.getElementById("logout").style.display = "block";
 
     document.getElementById("logout").addEventListener('click', logoutAjax, false);
-    user_id = user_id;
-    username = username;
+    user_id = user_idPull;
+    username = usernamePull;
     token = tokenPull;
 
     // display the date that its currently on,
@@ -502,6 +507,11 @@ function loginSuccess(user_id, username, tokenPull) {
     document.getElementById("editForm").style.display = "none";
     document.getElementById("currentDateEvents").style.display = "block";
     document.getElementById("viewEvent").style.display = "none";
+
+    updateCalendar();
+    daysWithEvents = [];
+    addDots();
+    addStars();
 }
 
 // LOGOUT FUNCTIONS
@@ -535,8 +545,9 @@ function logoutAjax(event) {
     function requestFailed() {
         alert("error");
     }
-    addDots();
-    addStars();
+    daysWithEvents = [];
+    updateCalendar();
+  
     event.preventDefault();
 }
 
@@ -752,7 +763,7 @@ function showEvents(year, month, day) {
     }
 }
 
-
+//adds event listeners to the event buttons on a single day to allow you to view the event
 function viewEventListeners() {
 
     let viewButtonArray = document.getElementsByClassName("eventButton");
@@ -815,7 +826,7 @@ function viewEventListeners() {
 
 }
 
-
+//sets the event listeners for the buttons inside event view
 function setViewButtonListeners(event_id, title, description, day, month, year) {
     let editPostButton = document.getElementById("editPostButton");
     let sharePostButton = document.getElementById("sharePostButton");
@@ -841,6 +852,7 @@ function setViewButtonListeners(event_id, title, description, day, month, year) 
 
 }
 
+//edit post functionality
 function editPostForm(event) {
 
     event_id = editPostButton.eventId;
@@ -864,6 +876,7 @@ function editPostForm(event) {
 
 }
 
+//edit post server call
 function editPostAjax(event) {
 
     event_id = document.getElementById('submitEditPost').event_id;
@@ -899,7 +912,7 @@ function editPostAjax(event) {
     }
 }
 
-
+//allows you to share a post with another user
 function sharePostAjax(event) {
 
     const shared_id = document.getElementById("shareWithUsername").value;
@@ -929,7 +942,7 @@ function sharePostAjax(event) {
 
 }
 
-
+//displays the events shared with you from other users
 function showShareEvents(year, month, day){
 
     const data = { 'year': year, 'month': month, 'day': day, 'user_id': user_id };
@@ -945,7 +958,7 @@ function showShareEvents(year, month, day){
             console.log('Success:', JSON.stringify(data))
             getShareSuccess(data);
         })
-        .catch(err => alert(err));
+        .catch(err => console.error(err));
 
     function getShareSuccess(data) {
         let i = 0;
@@ -970,7 +983,7 @@ function showShareEvents(year, month, day){
     }
 }
 
-
+//delete post functionality
 function deletePost(event) {
     event_id = deletePostButton.event_id;
     console.log("variables set");
