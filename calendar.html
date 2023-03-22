@@ -88,7 +88,8 @@
             <div class="contentInSideBar">
 
                 <div id="addForm">
-                    <div class="sideBarTitle" id="sideBarAddTitle">Add an Event</div><hr>
+                    <div class="sideBarTitle" id="sideBarAddTitle">Add an Event</div>
+                    <hr>
                     <form method='POST'><br>
                         <label>Event Name: </label><br><input type='text' id='eventName' name='eventName'><br><br>
                         <label>Start Date: </label><br><input type='date' id='startDate' name='startDate'><br><br>
@@ -96,20 +97,26 @@
                         <label>Description: </label><br><textarea id='eventDesc' name="description" rows="5" cols="40"
                             placeholder='description'></textarea><br><br>
                         <input class="button" type='submit' value='Add Event' id='eventSubmit' name='submitButton'>
-                        <br><hr>
+                        <br>
+                        <hr>
                     </form>
                 </div>
 
                 <div id="editForm">
-                    <div class="sideBarTitle" id="sideBarAddTitle">Edit Event</div><hr>
+                    <div class="sideBarTitle" id="sideBarAddTitle">Edit Event</div>
+                    <hr>
                     <form method='POST'><br>
-                        <label>Event Name: </label><br><input type='text' id='editEventName' name='editEventName'><br><br>
-                        <label>Start Date: </label><br><input type='date' id='editStartDate' name='editStartDate'><br><br>
-                        <label>Start time: </label><br><input type='time' id='editStartTime' name='editStartTime'><br><br>
-                        <label>Description: </label><br><textarea id='editEventDesc' name="editDescription" rows="5" cols="40"
-                            placeholder='description'></textarea><br><br>
+                        <label>Event Name: </label><br><input type='text' id='editEventName'
+                            name='editEventName'><br><br>
+                        <label>Start Date: </label><br><input type='date' id='editStartDate'
+                            name='editStartDate'><br><br>
+                        <label>Start time: </label><br><input type='time' id='editStartTime'
+                            name='editStartTime'><br><br>
+                        <label>Description: </label><br><textarea id='editEventDesc' name="editDescription" rows="5"
+                            cols="40" placeholder='description'></textarea><br><br>
                         <div class="button" id="submitEditPost">Edit Post</div>
-                        <br><hr>
+                        <br>
+                        <hr>
                     </form>
                 </div>
 
@@ -118,12 +125,19 @@
                     <hr>
                     <div id="dateEvents"><br>
                     </div>
-                    <br><hr>
+                    <br>
+                    <hr>
+
+                    <div class="sideBarTitle">Share this Event!</div>
+                    <div id="shareDate">
+                    <br>
+                    <hr>
                     <div class="button" id="addEventButton">Add Event</div>
                 </div>
 
                 <div id="registerForm">
-                    <div class="sideBarTitle" id="registerTitle">Register</div><hr>
+                    <div class="sideBarTitle" id="registerTitle">Register</div>
+                    <hr>
                     <form method='POST'><br>
                         <label>First Name: </label><br><input type='text' id='first_name' name='first_name'><br><br>
                         <label>Last Name: </label><br><input type='text' id='last_name' name='last_name'><br><br>
@@ -134,35 +148,42 @@
                             name='checkpwd'><br><br>
                         <input class='button' type='submit' value='Register' name='submit' id='registerSubmit'><br><br>
                     </form>
-                    <br><hr>
+                    <br>
+                    <hr>
                     <div id="loginLink"><u>Click here already have an account!</u></div>
                 </div>
 
                 <div id="loginForm">
-                    <div class="sideBarTitle" id="loginTitle">Login</div><hr>
+                    <div class="sideBarTitle" id="loginTitle">Login</div>
+                    <hr>
                     <form method="POST"><br>
                         <label><b>Username: </b><input type="text" id="loginUsername"></label><br><br>
                         <label><b>Password: </b><input type="text" id="loginPassword"></label><br><br>
                         <input class="button" type="submit" value="Login" id="loginSubmit"><br>
                     </form>
-                    <br><hr>
+                    <br>
+                    <hr>
                     <div id="registerLink"><u>Click here if you don't have an account!</u></div>
                 </div>
 
                 <div id="viewEvent">
-                    <div class="sideBarTitle" id="viewTitle"></div><hr>
+                    <div class="sideBarTitle" id="viewTitle"></div>
+                    <hr>
                     <br>
                     <div class="viewEventBody">
                         <div id="eventDate"></div>
                         <div id="eventTime"></div>
                         <div id="eventDescription"></div>
                     </div>
-                    <br><hr>
+                    <br>
+                    <hr>
 
                     <div id="shareEvent">
                         <div class="sideBarTitle">Share this Event!</div>
-                        <textarea id="shareWithUsername" placeholder="Other Person's Username" rows="1" cols="50"></textarea>
-                        <br><div class="button" id="sharePostButton">Share this Post</div>
+                        <textarea id="shareWithUsername" placeholder="Other Person's Username" rows="1"
+                            cols="50"></textarea>
+                        <br>
+                        <div class="button" id="sharePostButton">Share this Post</div>
                     </div>
                     <br>
                     <hr>
