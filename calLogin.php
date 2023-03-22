@@ -35,6 +35,7 @@ if($cnt == 1 && password_verify($pwd_guess, $pwd_hash)) {
 // Check to see if the username and password are valid.  (You learned how to do this in Module 3.)
 
 if($verified == true){
+	ini_set("session.cookie_httponly", 1);
 	session_start();
 	$_SESSION['username'] = $username;
     $_SESSION['user_id'] = $user_id;
@@ -42,7 +43,8 @@ if($verified == true){
 
 	echo json_encode(array(
 		"success" => true,
-		"user_id" => $_SESSION['user_id']
+		"user_id" => $_SESSION['user_id'],
+		"token" => $_SESSION['token']
 	));
 	exit;
 }else{

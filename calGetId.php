@@ -1,4 +1,6 @@
 <?php
+    ini_set("session.cookie_httponly", 1);
+
     session_start();
 
 
@@ -15,7 +17,8 @@
             echo json_encode(array(
                 "success" => true,
                 "user_id" => $_SESSION['user_id'],
-                'username' => $_SESSION['username']
+                'username' => $_SESSION['username'],
+                'token' => $_SESSION['token']
             ));
             exit;
         }

@@ -1,4 +1,6 @@
 <?php
+ini_set("session.cookie_httponly", 1);
+
 session_start();
 
 
@@ -23,6 +25,14 @@ $time = $json_obj['time'];
 $description = $json_obj['description'];
 $user_id = $_SESSION['user_id'];
 //This is equivalent to what you previously did with $_POST['username'] and $_POST['password']
+
+$tokenRecieve = $json_obj['token'];
+//This is equivalent to what you previously did with $_POST['username'] and $_POST['password']
+
+if(!hash_equals($_SESSION['token'], $tokenRecieve)){
+	die("Request forgery detected");
+}
+
 
 $stmt = $mysqli->prepare("update events SET title = ?, day = ?, month = ?, year = ?, time = ?, description = ? WHERE event_id = ? AND user_id = ?");
 

@@ -1,4 +1,5 @@
 <?php
+ini_set("session.cookie_httponly", 1);
 session_start();
 
 require "calDatabase.php";
@@ -20,7 +21,12 @@ $year = $json_obj['year'];
 $time = $json_obj['time'];
 $description = $json_obj['description'];
 $user_id = $_SESSION['user_id'];
+$tokenRecieve = $json_obj['token'];
 //This is equivalent to what you previously did with $_POST['username'] and $_POST['password']
+
+if(!hash_equals($_SESSION['token'], $tokenRecieve)){
+	die("Request forgery detected");
+}
 
 $stmt = $mysqli->prepare("insert into events (title, day, month, year, time, user_id, description) values (?, ?, ?, ?, ?, ?, ?)");
 

@@ -37,12 +37,14 @@ function getSessionId() {
         headers: { 'content-type': 'application/json' }
     })
         .then(response => response.json())
-        .then(data => data.success ? requestSuccess(data.user_id, data.username) : requestFailed(data.message))
+        .then(data => data.success ? requestSuccess(data.user_id, data.username,  data.token) : requestFailed(data.message))
         .catch(err => console.error(err));
 
-    function requestSuccess(user_id, username) {
+    function requestSuccess(user_id, username, token) {
         Window.user_id = user_id;
         Window.username = username;
+        Window.token = token;
+        alert(Window.token);
         console.log(Window.username);
         console.log(Window.user_id);
         loginSuccess(Window.user_id, Window.username);
@@ -202,7 +204,7 @@ function loginAjax(event) {
         headers: { 'content-type': 'application/json' }
     })
         .then(response => response.json())
-        .then(data => data.success ? loginSuccess(data.user_id, username) : loginFailed(data.message))
+        .then(data => data.success ? loginSuccess(data.user_id, username, data.token) : loginFailed(data.message))
         .catch(err => console.error(err));
 
     function loginFailed(error) {
@@ -214,7 +216,7 @@ function loginAjax(event) {
 
 
 let loggedIn = false;
-function loginSuccess(user_id, username) {
+function loginSuccess(user_id, username, token) {
     // UPDATE HEADER
     document.getElementById("welcome").innerText = "Hello, " + username;
     document.getElementById("login").style.display = "none";
@@ -224,6 +226,8 @@ function loginSuccess(user_id, username) {
     document.getElementById("logout").addEventListener('click', logoutAjax, false);
     Window.user_id = user_id;
     Window.username = username;
+    Window.token = token;
+    alert(Window.token);
     loggedIn = true;
 
     // display the date that its currently on,
