@@ -945,7 +945,7 @@ function showShareEvents(year, month, day){
             console.log('Success:', JSON.stringify(data))
             getShareSuccess(data);
         })
-        .catch(err => console.error(err));
+        .catch(err => alert(err));
 
     function getShareSuccess(data) {
         let i = 0;

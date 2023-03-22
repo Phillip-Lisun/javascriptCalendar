@@ -66,3 +66,5 @@ if($fetched == true){
 	));
 	exit;
 }
+
+?>
