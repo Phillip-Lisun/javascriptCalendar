@@ -20,7 +20,7 @@ body {
 
 .welcome {
     font-size: 50px;
-    float: center;
+    /* float: center; */
 }
 
 .addButton {
