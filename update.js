@@ -3,12 +3,16 @@
 function Week(c) { this.sunday = c.getSunday(); this.nextWeek = function () { return new Week(this.sunday.deltaDays(7)) }; this.prevWeek = function () { return new Week(this.sunday.deltaDays(-7)) }; this.contains = function (b) { return this.sunday.valueOf() === b.getSunday().valueOf() }; this.getDates = function () { for (var b = [], a = 0; 7 > a; a++)b.push(this.sunday.deltaDays(a)); return b } }
 function Month(c, b) { this.year = c; this.month = b; this.nextMonth = function () { return new Month(c + Math.floor((b + 1) / 12), (b + 1) % 12) }; this.prevMonth = function () { return new Month(c + Math.floor((b - 1) / 12), (b + 11) % 12) }; this.getDateObject = function (a) { return new Date(this.year, this.month, a) }; this.getWeeks = function () { var a = this.getDateObject(1), b = this.nextMonth().getDateObject(0), c = [], a = new Week(a); for (c.push(a); !a.contains(b);)a = a.nextWeek(), c.push(a); return c } };
 
+let user_id = -1;
+let username = "";
 
 // Window.onload = document.getElementById("logout").style.display = "none";
 //gets current date & sets 
 let date = new Date();
 let currentMonth = new Month((date.getFullYear()), (date.getMonth())); // October 2017
-Window.onload = updateCalendar();
+// Window.onload = updateCalendar();
+Window.onload = getSessionId();
+
 
 // Change the month when the "next" button is pressed
 document.getElementById("rightArrow").addEventListener("click", function (event) {
@@ -21,6 +25,8 @@ document.getElementById("leftArrow").addEventListener("click", function (event) 
     currentMonth = currentMonth.prevMonth(); // Previous month would be currentMonth.prevMonth()
     updateCalendar(); // Whenever the month is updated, we'll need to re-render the calendar in HTML
 }, false);
+
+
 
 // This updateCalendar() function only alerts the dates in the currently specified month.  You need to write
 // it to modify the DOM (optionally using jQuery) to display the days and weeks in the current month.
@@ -69,7 +75,43 @@ function updateCalendar() {
                 divs[i].style.backgroundColor = "#A6BB8D";
             }
 
-            divs[i].innerHTML = days[d].getDate();
+            let addDotBool = false;
+            // getSessionId();
+            if (user_id != -1) {
+                const data = { 'day': days[d].getDate(), 'month': currentMonth.month - 1, 'year': year, 'user_id': user_id };
+
+                fetch("check.php", {
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                    headers: { 'content-type': 'application/json' }
+                })
+                    .then(response => response.json())
+                    .then(data => data.success ? addDot : noDot)
+                    .catch(err => console.error(err));
+
+                function addDot() {
+                    divs[i].innerHTML = days[d].getDate() + " <br> <span class='dot'></span>";
+                    addDotBool = true;
+
+
+                }
+
+                function noDot() {
+                    divs[i].innerHTML = days[d].getDate();
+
+                }
+
+                //event.preventDefault();
+            }
+
+
+            // if (addDotBool) {
+            //     // divs[i].innerHTML = days[d].getDate() + " <br> <span class='dot'></span>";
+            // }
+            else {
+                divs[i].innerHTML = days[d].getDate();
+            }
+
             i++;
         }
     }
@@ -112,8 +154,7 @@ function timeConvert(time) {
 }
 
 
-let user_id = -1;
-let username = "";
+
 let previousElement = '14';
 let previousDay = 15;
 
@@ -219,7 +260,7 @@ function setEventListeners() {
 }
 
 
-Window.onload = displayCurrentDate();
+//Window.onload = displayCurrentDate();
 function displayCurrentDate() {
     let todayYear = date.getFullYear();
     let todayMonth = date.getMonth();
@@ -262,12 +303,14 @@ function displayCurrentDate() {
         document.getElementById("currentDateEvents").style.display = "block";
         document.getElementById("viewEvent").style.display = "none";
     }
+
+    windowLoadVar();
 }
 
 
 
 // SESSION ID
-Window.onload = getSessionId();
+
 function getSessionId() {
     const data = { 'request': 'userID' };
 
@@ -285,11 +328,26 @@ function getSessionId() {
         username = curr_username;
         console.log(username);
         console.log(user_id);
-        loginSuccess(user_id, username);
+        if (windowLoadVarNum == 0) {
+            loginSuccess(user_id, username);
+            displayCurrentDate();
+        }
+        updateCalendar();
     }
     function requestFailed(error) {
         console.log(error);
+        updateCalendar();
+
     }
+
+
+}
+
+
+let windowLoadVarNum = 0;
+
+function windowLoadVar() {
+    windowLoadVarNum = 1;
 }
 
 
@@ -563,7 +621,7 @@ function showEvents(year, month, day) {
     document.getElementById("editForm").style.display = "none";
     document.getElementById("viewEvent").style.display = "none";
 
-    if(year == "a") {
+    if (year == "a") {
         year = date.getFullYear;
         month = date.getMonth;
         day = date.getDay;
@@ -617,12 +675,12 @@ function viewEventListeners() {
     let viewButtonArray = document.getElementsByClassName("eventButton");
     let sideBar = document.getElementById("viewTitle");
     //let displayCurrentMonth = currentMonth.getDateObject;
-    
+
     for (let i = 0; i < viewButtonArray.length; i++) {
 
 
         viewButtonArray[i].addEventListener('click', e => {
-    
+
 
             let currentElement = e.target.id;
             const getEventIdArr = currentElement.split("-");
@@ -679,6 +737,9 @@ function viewEventListeners() {
 
 function setViewButtonListeners(event_id, title, description, day, month, year) {
     let editPostButton = document.getElementById("editPostButton");
+    let sharePostButton = document.getElementById("sharetPostButton");
+
+    sharePostButton.addEventListener('click', sharePostForm, false);
 
     editPostButton.addEventListener('click', editPostForm, false);
     editPostButton.eventId = event_id;
@@ -691,7 +752,7 @@ function setViewButtonListeners(event_id, title, description, day, month, year) 
     deletePostButton.event_id = event_id;
     deletePostButton.day = day;
     deletePostButton.month = month;
-    deletePostButton.year= year;
+    deletePostButton.year = year;
 
 
     return;
@@ -719,9 +780,6 @@ function editPostForm(event) {
     document.getElementById("submitEditPost").addEventListener('click', editPostAjax, false);
     document.getElementById('submitEditPost').event_id = event_id;
 
-
-
-   
 }
 
 function editPostAjax(event) {
@@ -739,7 +797,7 @@ function editPostAjax(event) {
     const startMonth = date[1] - 1;
     const startDay = date[2];
 
-    const data = {'event_id': event_id, 'title': eventName, 'day': startDay, 'month': startMonth, 'year': startYear, 'time': startTime, 'description': description};
+    const data = { 'event_id': event_id, 'title': eventName, 'day': startDay, 'month': startMonth, 'year': startYear, 'time': startTime, 'description': description };
 
     fetch("calEditEvent.php", {
         method: 'POST',
@@ -757,17 +815,72 @@ function editPostAjax(event) {
     function addFailed(message) {
         alert(message);
     }
+}
 
 
+function sharePostForm(event) {
 
+    event_id = editPostButton.eventId;
+    title = editPostButton.title;
+    description = editPostButton.description;
 
+    console.log("edit");
+
+    document.getElementById("addForm").style.display = "none";
+    document.getElementById("loginForm").style.display = "none";
+    document.getElementById("registerForm").style.display = "none";
+    document.getElementById("currentDateEvents").style.display = "none";
+    document.getElementById("viewEvent").style.display = "none";
+    document.getElementById("editForm").style.display = "block";
+
+    document.getElementById("editEventName").value = title;
+    document.getElementById("editEventDesc").textContent = description;
+
+    document.getElementById("submitEditPost").addEventListener('click', editPostAjax, false);
+    document.getElementById('submitEditPost').event_id = event_id;
+
+}
+
+function sharePostAjax(event) {
+
+    event_id = document.getElementById('submitEditPost').event_id;
+
+    const eventName = document.getElementById("editEventName").value;
+    const startDate = document.getElementById("editStartDate").value;
+    const startTime = document.getElementById("editStartTime").value;
+    const description = document.getElementById("editEventDesc").value;
+    console.log("variables set");
+
+    const date = startDate.split('-');
+    const startYear = date[0];
+    const startMonth = date[1] - 1;
+    const startDay = date[2];
+
+    const data = { 'event_id': event_id, 'title': eventName, 'day': startDay, 'month': startMonth, 'year': startYear, 'time': startTime, 'description': description };
+
+    fetch("calEditEvent.php", {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: { 'content-type': 'application/json' }
+    })
+        .then(response => response.json())
+        .then(data => data.success ? addSuccess() : addFailed(data.message))
+        .catch(err => console.error(err));
+
+    function addSuccess() {
+        alert("event edited!");
+        showEvents(startYear, startMonth, startDay);
+    }
+    function addFailed(message) {
+        alert(message);
+    }
 }
 
 function deletePost(event) {
     event_id = deletePostButton.event_id;
     console.log("variables set");
 
-    const data = {'event_id': event_id};
+    const data = { 'event_id': event_id };
 
     fetch("calDeleteEvent.php", {
         method: 'POST',
