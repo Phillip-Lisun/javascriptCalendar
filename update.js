@@ -12,25 +12,63 @@ let date = new Date();
 let currentMonth = new Month((date.getFullYear()), (date.getMonth())); // October 2017
 // Window.onload = updateCalendar();
 Window.onload = getSessionId();
+function getSessionId() {
+    const data = { 'request': 'userID' };
+
+    fetch("calGetId.php", {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: { 'content-type': 'application/json' }
+    })
+        .then(response => response.json())
+        .then(data => data.success ? requestSuccess(data.user_id, data.username) : requestFailed(data.message))
+        .catch(err => console.error(err));
+
+    function requestSuccess(curr_user_id, curr_username) {
+        user_id = curr_user_id;
+        username = curr_username;
+        console.log(username);
+        console.log(user_id);
+        if (windowLoadVarNum == 0) {
+            loginSuccess(user_id, username);
+            displayCurrentDate();
+        }
+        
+    }
+    function requestFailed(error) {
+        console.log(error);
+
+    }
+
+}
+
 
 
 // Change the month when the "next" button is pressed
 document.getElementById("rightArrow").addEventListener("click", function (event) {
     currentMonth = currentMonth.nextMonth(); // Previous month would be currentMonth.prevMonth()
     updateCalendar(); // Whenever the month is updated, we'll need to re-render the calendar in HTML
+    daysWithEvents = [];
+    addDots();
+    addStars();
 }, false);
 
 // Change the month when the "back" button is pressed
 document.getElementById("leftArrow").addEventListener("click", function (event) {
     currentMonth = currentMonth.prevMonth(); // Previous month would be currentMonth.prevMonth()
     updateCalendar(); // Whenever the month is updated, we'll need to re-render the calendar in HTML
+    daysWithEvents = [];
+    addDots();
+    addStars();
 }, false);
 
 
 
 // This updateCalendar() function only alerts the dates in the currently specified month.  You need to write
 // it to modify the DOM (optionally using jQuery) to display the days and weeks in the current month.
+window.onload = updateCalendar();
 function updateCalendar() {
+    getSessionId();
 
     //copied code beginning https://bobbyhadz.com/blog/javascript-convert-month-number-to-name
     date.setMonth(currentMonth.month);
@@ -75,42 +113,8 @@ function updateCalendar() {
                 divs[i].style.backgroundColor = "#A6BB8D";
             }
 
-            let addDotBool = false;
-            // getSessionId();
-            if (user_id != -1) {
-                const data = { 'day': days[d].getDate(), 'month': currentMonth.month - 1, 'year': year, 'user_id': user_id };
+            divs[i].innerHTML = days[d].getDate();
 
-                fetch("check.php", {
-                    method: 'POST',
-                    body: JSON.stringify(data),
-                    headers: { 'content-type': 'application/json' }
-                })
-                    .then(response => response.json())
-                    .then(data => data.success ? addDot : noDot)
-                    .catch(err => console.error(err));
-
-                function addDot() {
-                    divs[i].innerHTML = days[d].getDate() + " <br> <span class='dot'></span>";
-                    addDotBool = true;
-
-
-                }
-
-                function noDot() {
-                    divs[i].innerHTML = days[d].getDate();
-
-                }
-
-                //event.preventDefault();
-            }
-
-
-            // if (addDotBool) {
-            //     // divs[i].innerHTML = days[d].getDate() + " <br> <span class='dot'></span>";
-            // }
-            else {
-                divs[i].innerHTML = days[d].getDate();
-            }
 
             i++;
         }
@@ -130,6 +134,108 @@ function updateCalendar() {
             divs[i].style.backgroundColor = "#A6BB8D";
             i++;
         }
+    }
+
+    addDots();
+    addStars();
+    
+}
+
+
+let daysWithEvents = [];
+
+
+async function addDots() {
+        await new Promise(resolve => setTimeout(resolve, 500)); // 3 sec
+
+
+        getSessionId();
+        //alert("Hello!");
+
+        
+
+        // if (user_id != -1) {
+
+        let divs = document.getElementsByClassName("grid-item");  
+        let i = 0;  
+
+        while(i < 42) {
+
+            let day = divs[i].textContent;
+
+            const data = { 'day': day, 'month': currentMonth.month, 'year': currentMonth.year, 'user_id': user_id };
+
+            fetch("calCheckEvents.php", {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: { 'content-type': 'application/json' }
+            })
+                .then(response => response.json())
+                .then(data => data.success ? addDot():noDot())
+                .catch(err => alert(err));
+
+            function addDot() {
+                //alert("There is an event");
+                if(!daysWithEvents.includes(day)) {
+                    daysWithEvents.push(day);
+                }
+            }
+
+            function noDot() {
+                console.log("No Events");                   
+            }   
+            i++;
+        }
+
+}
+
+async function addStars() {
+    await new Promise(resolve => setTimeout(resolve, 1500)); // 5 sec
+    //alert("I am in add stars");
+    //daysWithEvents.sort();
+
+
+    let i = 0;
+
+    let startIndex = 0;
+    let endIndex = 42;
+
+    let divs = document.getElementsByClassName("grid-item");  
+
+    let monthIndicator = 0;
+    let j = 0;
+
+    while(j < 42) {
+
+        let day = divs[j].textContent;
+
+        if(day == 1 && monthIndicator == 0) {
+            startIndex = j;
+            monthIndicator++;
+        }
+        else if(day == 1 && monthIndicator == 1) {
+            endIndex = j;
+        }
+
+
+        j++;
+    }
+  
+
+    while(i < daysWithEvents.length) {
+
+        while(startIndex < endIndex) {
+
+            let day = divs[startIndex].textContent;
+
+            if(day == daysWithEvents[i]) {
+                divs[startIndex].textContent += "*";
+                i++;
+            }
+            startIndex++;
+        }
+        i++;
+
     }
 }
 
@@ -309,39 +415,7 @@ function displayCurrentDate() {
 
 
 
-// SESSION ID
 
-function getSessionId() {
-    const data = { 'request': 'userID' };
-
-    fetch("calGetId.php", {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: { 'content-type': 'application/json' }
-    })
-        .then(response => response.json())
-        .then(data => data.success ? requestSuccess(data.user_id, data.username) : requestFailed(data.message))
-        .catch(err => console.error(err));
-
-    function requestSuccess(curr_user_id, curr_username) {
-        user_id = curr_user_id;
-        username = curr_username;
-        console.log(username);
-        console.log(user_id);
-        if (windowLoadVarNum == 0) {
-            loginSuccess(user_id, username);
-            displayCurrentDate();
-        }
-        updateCalendar();
-    }
-    function requestFailed(error) {
-        console.log(error);
-        updateCalendar();
-
-    }
-
-
-}
 
 
 let windowLoadVarNum = 0;
@@ -906,3 +980,7 @@ function deletePost(event) {
     showEvents(year, month, day);
 
 }
+
+addDots();
+addStars();
+

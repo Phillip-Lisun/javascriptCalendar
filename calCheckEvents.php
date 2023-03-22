@@ -32,9 +32,6 @@ $stmt->bind_result($cnt);
 $stmt->fetch();
 $stmt->close();
 
-
-// Bind the results
-//$stmt->bind_result($json);
 if($fetched == true) {
 
     if($cnt == 0) {
