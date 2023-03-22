@@ -22,7 +22,9 @@ $user_id = $_SESSION['user_id'];
 $user_id = $_SESSION['user_id'];
 
 //$stmt = $mysqli->prepare("SELECT json_object('title', title, 'time', time) FROM events WHERE day=? AND month=? AND year=? AND user_id=?");
-$stmt = $mysqli->prepare("SELECT event_id from share ORDER BY time");
+$stmt = $mysqli->prepare("SELECT event_id from share where shared_user_id = ? ORDER BY time");
+
+$stmt->bind_param('i', $user_id);
 
 if($stmt->execute()) {
     $fetched = true;
@@ -54,7 +56,7 @@ if($fetched == false){
 }
 
 
-$stmt = $mysqli->prepare("SELECT title, time, event_id FROM events WHERE event_id=? and month=? and year=? and day=? ORDER BY time");
+$stmt = $mysqli->prepare("SELECT title, time, event_id, month, day, years FROM events WHERE event_id=? and month=? and year=? and day=? ORDER BY time");
 
 $stmt->bind_param('iiii', $event_id, $month, $year, $day);
 if($stmt->execute()) {
